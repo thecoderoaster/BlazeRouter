@@ -1,0 +1,21 @@
+Release 10.1.03 Map K.39 (nt)
+Xilinx Map Application Log File for Design 'BlazeRouter'
+
+Design Information
+------------------
+Command Line   : map -ise C:/Users/BlazeRouter/BlazeRouter.ise -intstyle ise -p
+xc4vsx35-ff668-10 -cm area -pr off -k 4 -c 100 -o BlazeRouter_map.ncd
+BlazeRouter.ngd BlazeRouter.pcf 
+Target Device  : xc4vsx35
+Target Package : ff668
+Target Speed   : -10
+Mapper Version : virtex4 -- $Revision: 1.46.12.2 $
+Mapped Date    : Wed Dec 22 16:26:47 2010
+
+ERROR:Map:116 - The design is empty.  No processing will be done.
+ERROR:Map:52 - Problem encountered processing RPMs. 
+
+Design Summary
+--------------
+Number of errors   :   1
+Number of warnings :   0

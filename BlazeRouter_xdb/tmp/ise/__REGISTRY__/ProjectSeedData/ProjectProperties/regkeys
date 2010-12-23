@@ -1,0 +1,33 @@
+PROP_DevDevice
+xc4vsx35
+s
+PROP_DevFamily
+Virtex4
+s
+PROP_DevPackage
+ff668
+s
+PROP_DevSpeed
+-10
+s
+PROP_Enable_Incremental_Messaging
+false
+s
+PROP_Enable_Message_Capture
+true
+s
+PROP_Enable_Message_Filtering
+false
+s
+PROP_PreferredLanguage
+VHDL
+s
+PROP_Simulator
+ISE Simulator (VHDL/Verilog)
+s
+PROP_Synthesis_Tool
+XST (VHDL/Verilog)
+s
+PROP_Top_Level_Module_Type
+HDL
+s

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<document OS="nt" product="ISE" version="10.1.03">
+
+  <!--The data in this file is primarily intended for consumption by Xilinx tools.
+    The structure and the elements are likely to change over the next few releases.
+    This means code written to parse this file will need to be revisited each subsequent release.-->
+
+  <application stringID="Xst" timeStamp="Wed Dec 22 16:26:08 2010">
+    <section stringID="XST_ADVANCED_HDL_SYNTHESIS_REPORTFOUND_NO_MACRO"/>
+    <section stringID="XST_FINAL_REGISTER_REPORTFOUND_NO_MACRO"/>
+    <section stringID="XST_PARTITION_REPORT">
+      <section stringID="XST_PARTITION_IMPLEMENTATION_STATUS">
+        <section stringID="XST_NO_PARTITIONS_WERE_FOUND_IN_THIS_DESIGN"/>
+      </section>
+    </section>
+    <section stringID="XST_FINAL_REPORT">
+      <section stringID="XST_FINAL_RESULTS">
+        <item stringID="XST_RTL_TOP_LEVEL_OUTPUT_FILE_NAME" value="BlazeRouter.ngr"/>
+        <item stringID="XST_TOP_LEVEL_OUTPUT_FILE_NAME" value="BlazeRouter"/>
+        <item stringID="XST_OUTPUT_FORMAT" value="NGC"/>
+        <item stringID="XST_OPTIMIZATION_GOAL" value="Speed"/>
+        <item stringID="XST_KEEP_HIERARCHY" value="NO"/>
+      </section>
+      <section stringID="XST_DESIGN_STATISTICS">
+        <item stringID="XST_IOS" value="80"/>
+      </section>
+      <section stringID="XST_CELL_USAGE"/>
+    </section>
+    <section stringID="XST_DEVICE_UTILIZATION_SUMMARY">
+      <item stringID="XST_SELECTED_DEVICE" value="4vsx35ff668-10"/>
+      <item AVAILABLE="15360" dataType="int" stringID="XST_NUMBER_OF_SLICES" value="0"/>
+      <item dataType="int" stringID="XST_NUMBER_OF_IOS" value="80"/>
+      <item AVAILABLE="448" dataType="int" stringID="XST_NUMBER_OF_BONDED_IOBS" value="0"/>
+    </section>
+    <section stringID="XST_PARTITION_RESOURCE_SUMMARY">
+      <section stringID="XST_NO_PARTITIONS_WERE_FOUND_IN_THIS_DESIGN"/>
+    </section>
+    <section stringID="XST_ERRORS_STATISTICS">
+      <item dataType="int" filtered="0" stringID="XST_NUMBER_OF_ERRORS" value="0"/>
+      <item dataType="int" filtered="0" stringID="XST_NUMBER_OF_WARNINGS" value="10"/>
+      <item dataType="int" filtered="0" stringID="XST_NUMBER_OF_INFOS" value="0"/>
+    </section>
+  </application>
+
+</document>
