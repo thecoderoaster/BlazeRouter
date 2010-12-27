@@ -1,2 +1,6 @@
 vhdl work "C:\Users\BlazeRouter\BlazePackage.vhd"
+vhdl work "C:\Users\BlazeRouter\SwitchUnit.vhd"
+vhdl work "C:\Users\BlazeRouter\LinkController.vhd"
+vhdl work "C:\Users\BlazeRouter\Buffer.vhd"
+vhdl work "C:\Users\BlazeRouter\Arbiter.vhd"
 vhdl work "C:\Users\BlazeRouter\BlazeRouter.vhd"

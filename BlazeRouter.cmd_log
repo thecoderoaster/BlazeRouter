@@ -1,3 +1,4 @@
 xst -ise "C:/Users/BlazeRouter/BlazeRouter.ise" -intstyle ise -ifn "C:/Users/BlazeRouter/BlazeRouter.xst" -ofn "C:/Users/BlazeRouter/BlazeRouter.syr"
-ngdbuild -ise "C:/Users/BlazeRouter/BlazeRouter.ise" -intstyle ise -dd _ngo  -nt timestamp -i -p xc4vsx35-ff668-10 "BlazeRouter.ngc" BlazeRouter.ngd
-map -ise "C:/Users/BlazeRouter/BlazeRouter.ise" -intstyle ise -p xc4vsx35-ff668-10 -cm area -pr off -k 4 -c 100 -o BlazeRouter_map.ncd BlazeRouter.ngd BlazeRouter.pcf
+ngdbuild -ise "C:/Users/BlazeRouter/BlazeRouter.ise" -intstyle ise -dd _ngo  -sd "C:/Users/BlazeRouter" -nt timestamp -i -p xc4vsx35-ff668-10 "BlazeRouter.ngc" BlazeRouter.ngd
+xst -ise "C:/Users/BlazeRouter/BlazeRouter.ise" -intstyle ise -ifn "C:/Users/BlazeRouter/BlazeRouter.xst" -ofn "C:/Users/BlazeRouter/BlazeRouter.syr"
+ngdbuild -ise "C:/Users/BlazeRouter/BlazeRouter.ise" -intstyle ise -dd _ngo  -sd "C:/Users/BlazeRouter" -nt timestamp -i -p xc4vsx35-ff668-10 "BlazeRouter.ngc" BlazeRouter.ngd

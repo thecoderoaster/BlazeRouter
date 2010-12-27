@@ -34,11 +34,12 @@ use work.router_library.all;
 --use UNISIM.VComponents.all;
 
 entity Buffers is 
-    port ( buffer_in 		: in  std_logic_vector (WIDTH downto 0);				--Input to buffer
-           buffer_out 		: out std_logic_vector (WIDTH downto 0);				--Output to switch
-			  buffer_en			: in  std_logic;												--Enables/Disables Buffer Transfer			  
-			  status				: out std_logic_vector (WIDTH downto 0);				--Provides current Status Code
-			  request_status	: in  std_logic);												--Asynchronous Status request on LOGIC '1'			
+    port ( buffer_in 			: in  std_logic_vector (WIDTH downto 0);				--Input to buffer
+           buffer_out 			: out std_logic_vector (WIDTH downto 0);				--Output to switch
+			  buffer_in_en			: in  std_logic;												--Enables Data Transfer into the buffer		  
+			  buffer_out_en		: in  std_logic;												--Enables Data Transfer out of the buffer
+			  status					: out std_logic_vector (WIDTH downto 0);				--Provides current Status Code
+			  request_status		: in  std_logic);												--Asynchronous Status request on LOGIC '1'			
 end Buffers;
 
 architecture rtl of Buffers is

@@ -33,18 +33,25 @@ use work.router_library.all;
 --use UNISIM.VComponents.all;
 
 entity LinkController is
-    port ( neighbor_txr : in  std_logic;										--Toggled by neighbor router for a transfer request
-			  neighbor_rxr : in  std_logic;									   --Toggled by neighbor saying "Ready for Transmission"
-			  local_txr	   : out std_logic;										--Toggled by local to neighbor asking for transfer request
-           local_rxr 	: out std_logic;										--Toggled by local to neighbor saying "Ready for Transmission"
-			  buffer_en		: out std_logic;										--Enables/Disables Buffer to grab data from N,S,W,E
-			  status			: in  std_logic_vector(WIDTH downto 0));		--Gets status on buffer (i.e: FULL/VACANT_SLOT)
+    port ( rxr 				: in  std_logic;										--Receive Ready
+			  txr 				: out  std_logic;									   --Transmission Request
+			  data				: inout std_logic_vector(WIDTH downto 0);		--Data to/from neighbor	
+			  data_local		: inout std_logic_vector(WIDTH downto 0);		--Data to/from buffer
+			  buffer_en			: out std_logic;										--Enables/Disables Buffer to grab data from N,S,W,E
+			  status				: in  std_logic_vector(WIDTH downto 0));		--Gets status on buffer (i.e: FULL/VACANT_SLOT)
 end LinkController;
 
 architecture rtl of LinkController is
 
 begin
-
-
+	lcproc: process(rxr, data)
+	begin
+		case rxr is
+			when '1' =>
+				data <= "00000001" after 1 ns;
+			when others =>
+				data <= "00000000" after 1 ns;
+		end case;
+	end process;
 end rtl;
 

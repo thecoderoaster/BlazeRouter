@@ -1,2 +1,6 @@
 vhdl work "BlazePackage.vhd"
+vhdl work "SwitchUnit.vhd"
+vhdl work "LinkController.vhd"
+vhdl work "Buffer.vhd"
+vhdl work "Arbiter.vhd"
 vhdl work "BlazeRouter.vhd"

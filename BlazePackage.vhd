@@ -19,5 +19,13 @@ package router_library is
 	constant VACANT_SLOT		: std_logic_vector (WIDTH downto 0) := "00000010";	 	-- CODE: 0x02 = Slot is now available
 	
 	--Definition of a flit
-	Type flit is array(0 to WIDTH) of std_logic;	
+	type flit is array(0 to WIDTH) of std_logic;	
+	
+	--Subtypes
+	subtype bit8 is std_logic_vector(7 downto 0);
+	subtype bit16 is std_logic_vector(15 downto 0);
+	subtype bit32 is std_logic_vector(31 downto 0);
+	subtype bit64 is std_logic_vector(63 downto 0);
+	subtype bit80 is std_logic_vector(79 downto 0);
+	
 end router_library;

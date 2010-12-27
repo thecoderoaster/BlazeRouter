@@ -37,17 +37,46 @@ use work.router_library.all;
 --use UNISIM.VComponents.all;
 
 entity Arbiter is	
-	port ( 	north_in 			: in std_logic_vector (WIDTH downto 0);		-- Incoming traffic
-				east_in 				: in std_logic_vector (WIDTH downto 0);
-				south_in 			: in std_logic_vector (WIDTH downto 0);
-				west_in				: in std_logic_vector (WIDTH downto 0);
-				injection			: in std_logic_vector (WIDTH downto 0);		-- From Processor Logic Bus/FSL
+	port ( 	n_data_in 			: in std_logic_vector (WIDTH downto 0);		-- Incoming traffic
+				e_data_in			: in std_logic_vector (WIDTH downto 0);
+				s_data_in			: in std_logic_vector (WIDTH downto 0);
+				w_data_in			: in std_logic_vector (WIDTH downto 0);
+				injection_data_in	: in std_logic_vector (WIDTH downto 0);		
+				status_0				: in std_logic_vector (WIDTH downto 0); -- Can be setup as stimulus
+				status_1				: in std_logic_vector (WIDTH downto 0);
+				status_2				: in std_logic_vector (WIDTH downto 0);
+				status_3				: in std_logic_vector (WIDTH downto 0);
+				status_4				: in std_logic_vector (WIDTH downto 0);
+				status_5				: in std_logic_vector (WIDTH downto 0);
+				status_6				: in std_logic_vector (WIDTH downto 0);
+				status_7				: in std_logic_vector (WIDTH downto 0);
+				status_8				: in std_logic_vector (WIDTH downto 0);
+				status_9				: in std_logic_vector (WIDTH downto 0);
+				clk					: in std_logic;
 				
-				north_status		: in std_logic_vector (WIDTH downto 0);		-- Can be setup as stimulus
-				east_status			: in std_logic_vector (WIDTH downto 0);
-				south_status		: in std_logic_vector (WIDTH downto 0);
-				west_status			: in std_logic_vector (WIDTH downto 0);
-				injection_status	: in std_logic_vector (WIDTH downto 0);	
+				request_0			: out std_logic;
+				request_1			: out std_logic;
+				request_2			: out std_logic;
+				request_3			: out std_logic;
+				request_4			: out std_logic;
+				request_5			: out std_logic;
+				request_6			: out std_logic;
+				request_7			: out std_logic;
+				request_8			: out std_logic;
+				request_9			: out std_logic;
+				
+				buffer_en_0			: out std_logic;
+				buffer_en_1			: out std_logic;
+				buffer_en_2			: out std_logic;
+				buffer_en_3			: out std_logic;
+				buffer_en_4			: out std_logic;
+				buffer_en_5			: out std_logic;
+				buffer_en_6			: out std_logic;
+				buffer_en_7			: out std_logic;
+				buffer_en_8			: out std_logic;
+				buffer_en_9			: out std_logic;
+				
+				switch_en			: out std_logic;
 				
 				rna_result			: out std_logic_vector (WIDTH downto 0));		-- Routing and Arbritration Results
 end Arbiter;

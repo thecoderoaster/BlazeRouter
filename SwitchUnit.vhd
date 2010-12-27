@@ -43,6 +43,7 @@ entity SwitchUnit is
 				west_in		: in std_logic_vector (WIDTH downto 0);
 				injection	: in std_logic_vector (WIDTH downto 0);		-- From Processor Logic Bus
 				rna_result	: in std_logic_vector (WIDTH downto 0);		-- Routing and Arbritration Results
+				switch_en	: in std_logic;
 				
 				north_out	: out std_logic_vector (WIDTH downto 0);		-- Outgoing traffic
 				east_out		: out std_logic_vector (WIDTH downto 0);	
@@ -55,5 +56,5 @@ architecture rtl of SwitchUnit is
 
 begin
 
-end rtl
+end rtl;
 

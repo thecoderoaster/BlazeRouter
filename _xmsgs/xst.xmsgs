@@ -5,34 +5,130 @@
      behavior or data corruption.  It is strongly advised that
      users do not edit the contents of this file. -->
 <messages>
-<msg type="warning" file="Xst" num="1306" delta="unknown" >Output &lt;<arg fmt="%s" index="1">north_out</arg>&gt; is never assigned.
+<msg type="warning" file="Xst" num="2211" delta="unknown" >&quot;<arg fmt="%s" index="1">C:/Users/BlazeRouter/BlazeRouter.vhd</arg>&quot; line <arg fmt="%d" index="2">239</arg>: Instantiating black box module &lt;<arg fmt="%s" index="3">Buffers</arg>&gt;.
 </msg>
 
-<msg type="warning" file="Xst" num="647" delta="unknown" >Input &lt;<arg fmt="%s" index="1">south_in</arg>&gt; is never used. This port will be preserved and left unconnected if it belongs to a top-level block or it belongs to a sub-block and the hierarchy of this sub-block is preserved.
+<msg type="warning" file="Xst" num="2211" delta="unknown" >&quot;<arg fmt="%s" index="1">C:/Users/BlazeRouter/BlazeRouter.vhd</arg>&quot; line <arg fmt="%d" index="2">245</arg>: Instantiating black box module &lt;<arg fmt="%s" index="3">Buffers</arg>&gt;.
 </msg>
 
-<msg type="warning" file="Xst" num="1306" delta="unknown" >Output &lt;<arg fmt="%s" index="1">ejection</arg>&gt; is never assigned.
+<msg type="warning" file="Xst" num="2211" delta="unknown" >&quot;<arg fmt="%s" index="1">C:/Users/BlazeRouter/BlazeRouter.vhd</arg>&quot; line <arg fmt="%d" index="2">251</arg>: Instantiating black box module &lt;<arg fmt="%s" index="3">Buffers</arg>&gt;.
 </msg>
 
-<msg type="warning" file="Xst" num="1306" delta="unknown" >Output &lt;<arg fmt="%s" index="1">east_out</arg>&gt; is never assigned.
+<msg type="warning" file="Xst" num="2211" delta="unknown" >&quot;<arg fmt="%s" index="1">C:/Users/BlazeRouter/BlazeRouter.vhd</arg>&quot; line <arg fmt="%d" index="2">257</arg>: Instantiating black box module &lt;<arg fmt="%s" index="3">Buffers</arg>&gt;.
 </msg>
 
-<msg type="warning" file="Xst" num="647" delta="unknown" >Input &lt;<arg fmt="%s" index="1">east_in</arg>&gt; is never used. This port will be preserved and left unconnected if it belongs to a top-level block or it belongs to a sub-block and the hierarchy of this sub-block is preserved.
+<msg type="warning" file="Xst" num="2211" delta="unknown" >&quot;<arg fmt="%s" index="1">C:/Users/BlazeRouter/BlazeRouter.vhd</arg>&quot; line <arg fmt="%d" index="2">265</arg>: Instantiating black box module &lt;<arg fmt="%s" index="3">Buffers</arg>&gt;.
 </msg>
 
-<msg type="warning" file="Xst" num="647" delta="unknown" >Input &lt;<arg fmt="%s" index="1">west_in</arg>&gt; is never used. This port will be preserved and left unconnected if it belongs to a top-level block or it belongs to a sub-block and the hierarchy of this sub-block is preserved.
+<msg type="warning" file="Xst" num="2211" delta="unknown" >&quot;<arg fmt="%s" index="1">C:/Users/BlazeRouter/BlazeRouter.vhd</arg>&quot; line <arg fmt="%d" index="2">271</arg>: Instantiating black box module &lt;<arg fmt="%s" index="3">Buffers</arg>&gt;.
 </msg>
 
-<msg type="warning" file="Xst" num="1306" delta="unknown" >Output &lt;<arg fmt="%s" index="1">west_out</arg>&gt; is never assigned.
+<msg type="warning" file="Xst" num="2211" delta="unknown" >&quot;<arg fmt="%s" index="1">C:/Users/BlazeRouter/BlazeRouter.vhd</arg>&quot; line <arg fmt="%d" index="2">277</arg>: Instantiating black box module &lt;<arg fmt="%s" index="3">Buffers</arg>&gt;.
 </msg>
 
-<msg type="warning" file="Xst" num="647" delta="unknown" >Input &lt;<arg fmt="%s" index="1">north_in</arg>&gt; is never used. This port will be preserved and left unconnected if it belongs to a top-level block or it belongs to a sub-block and the hierarchy of this sub-block is preserved.
+<msg type="warning" file="Xst" num="2211" delta="unknown" >&quot;<arg fmt="%s" index="1">C:/Users/BlazeRouter/BlazeRouter.vhd</arg>&quot; line <arg fmt="%d" index="2">283</arg>: Instantiating black box module &lt;<arg fmt="%s" index="3">Buffers</arg>&gt;.
 </msg>
 
-<msg type="warning" file="Xst" num="647" delta="unknown" >Input &lt;<arg fmt="%s" index="1">injection</arg>&gt; is never used. This port will be preserved and left unconnected if it belongs to a top-level block or it belongs to a sub-block and the hierarchy of this sub-block is preserved.
+<msg type="warning" file="Xst" num="2211" delta="unknown" >&quot;<arg fmt="%s" index="1">C:/Users/BlazeRouter/BlazeRouter.vhd</arg>&quot; line <arg fmt="%d" index="2">291</arg>: Instantiating black box module &lt;<arg fmt="%s" index="3">Buffers</arg>&gt;.
 </msg>
 
-<msg type="warning" file="Xst" num="1306" delta="unknown" >Output &lt;<arg fmt="%s" index="1">south_out</arg>&gt; is never assigned.
+<msg type="warning" file="Xst" num="2211" delta="unknown" >&quot;<arg fmt="%s" index="1">C:/Users/BlazeRouter/BlazeRouter.vhd</arg>&quot; line <arg fmt="%d" index="2">297</arg>: Instantiating black box module &lt;<arg fmt="%s" index="3">Buffers</arg>&gt;.
+</msg>
+
+<msg type="warning" file="Xst" num="2211" delta="unknown" >&quot;<arg fmt="%s" index="1">C:/Users/BlazeRouter/BlazeRouter.vhd</arg>&quot; line <arg fmt="%d" index="2">305</arg>: Instantiating black box module &lt;<arg fmt="%s" index="3">SwitchUnit</arg>&gt;.
+</msg>
+
+<msg type="warning" file="Xst" num="753" delta="unknown" >&quot;<arg fmt="%s" index="1">C:/Users/BlazeRouter/BlazeRouter.vhd</arg>&quot; line <arg fmt="%d" index="2">318</arg>: Unconnected output port &apos;<arg fmt="%s" index="3">buffer_en_9</arg>&apos; of component &apos;<arg fmt="%s" index="4">Arbiter</arg>&apos;.
+</msg>
+
+<msg type="warning" file="Xst" num="753" delta="unknown" >&quot;<arg fmt="%s" index="1">C:/Users/BlazeRouter/BlazeRouter.vhd</arg>&quot; line <arg fmt="%d" index="2">318</arg>: Unconnected output port &apos;<arg fmt="%s" index="3">switch_en</arg>&apos; of component &apos;<arg fmt="%s" index="4">Arbiter</arg>&apos;.
+</msg>
+
+<msg type="warning" file="Xst" num="753" delta="unknown" >&quot;<arg fmt="%s" index="1">C:/Users/BlazeRouter/BlazeRouter.vhd</arg>&quot; line <arg fmt="%d" index="2">318</arg>: Unconnected output port &apos;<arg fmt="%s" index="3">rna_result</arg>&apos; of component &apos;<arg fmt="%s" index="4">Arbiter</arg>&apos;.
+</msg>
+
+<msg type="warning" file="Xst" num="2211" delta="unknown" >&quot;<arg fmt="%s" index="1">C:/Users/BlazeRouter/BlazeRouter.vhd</arg>&quot; line <arg fmt="%d" index="2">318</arg>: Instantiating black box module &lt;<arg fmt="%s" index="3">Arbiter</arg>&gt;.
+</msg>
+
+<msg type="warning" file="Xst" num="2563" delta="unknown" >Inout &lt;<arg fmt="%s" index="1">data_local&lt;0&gt;</arg>&gt; is never assigned. Tied to value <arg fmt="%s" index="2">Z</arg>.
+</msg>
+
+<msg type="warning" file="Xst" num="2563" delta="unknown" >Inout &lt;<arg fmt="%s" index="1">data_local&lt;1&gt;</arg>&gt; is never assigned. Tied to value <arg fmt="%s" index="2">Z</arg>.
+</msg>
+
+<msg type="warning" file="Xst" num="2563" delta="unknown" >Inout &lt;<arg fmt="%s" index="1">data_local&lt;2&gt;</arg>&gt; is never assigned. Tied to value <arg fmt="%s" index="2">Z</arg>.
+</msg>
+
+<msg type="warning" file="Xst" num="2563" delta="unknown" >Inout &lt;<arg fmt="%s" index="1">data_local&lt;3&gt;</arg>&gt; is never assigned. Tied to value <arg fmt="%s" index="2">Z</arg>.
+</msg>
+
+<msg type="warning" file="Xst" num="2563" delta="unknown" >Inout &lt;<arg fmt="%s" index="1">data_local&lt;4&gt;</arg>&gt; is never assigned. Tied to value <arg fmt="%s" index="2">Z</arg>.
+</msg>
+
+<msg type="warning" file="Xst" num="2563" delta="unknown" >Inout &lt;<arg fmt="%s" index="1">data_local&lt;5&gt;</arg>&gt; is never assigned. Tied to value <arg fmt="%s" index="2">Z</arg>.
+</msg>
+
+<msg type="warning" file="Xst" num="2563" delta="unknown" >Inout &lt;<arg fmt="%s" index="1">data_local&lt;6&gt;</arg>&gt; is never assigned. Tied to value <arg fmt="%s" index="2">Z</arg>.
+</msg>
+
+<msg type="warning" file="Xst" num="2563" delta="unknown" >Inout &lt;<arg fmt="%s" index="1">data_local&lt;7&gt;</arg>&gt; is never assigned. Tied to value <arg fmt="%s" index="2">Z</arg>.
+</msg>
+
+<msg type="warning" file="Xst" num="647" delta="unknown" >Input &lt;<arg fmt="%s" index="1">status</arg>&gt; is never used. This port will be preserved and left unconnected if it belongs to a top-level block or it belongs to a sub-block and the hierarchy of this sub-block is preserved.
+</msg>
+
+<msg type="warning" file="Xst" num="1305" delta="unknown" >Output &lt;<arg fmt="%s" index="1">buffer_en</arg>&gt; is never assigned. Tied to value <arg fmt="%s" index="2">0</arg>.
+</msg>
+
+<msg type="warning" file="Xst" num="1305" delta="unknown" >Output &lt;<arg fmt="%s" index="1">txr</arg>&gt; is never assigned. Tied to value <arg fmt="%s" index="2">0</arg>.
+</msg>
+
+<msg type="warning" file="Xst" num="647" delta="unknown" >Input &lt;<arg fmt="%s" index="1">clk</arg>&gt; is never used. This port will be preserved and left unconnected if it belongs to a top-level block or it belongs to a sub-block and the hierarchy of this sub-block is preserved.
+</msg>
+
+<msg type="warning" file="Xst" num="1306" delta="unknown" >Output &lt;<arg fmt="%s" index="1">local_rxr</arg>&gt; is never assigned.
+</msg>
+
+<msg type="warning" file="Xst" num="647" delta="unknown" >Input &lt;<arg fmt="%s" index="1">processor_rxr</arg>&gt; is never used. This port will be preserved and left unconnected if it belongs to a top-level block or it belongs to a sub-block and the hierarchy of this sub-block is preserved.
+</msg>
+
+<msg type="warning" file="Xst" num="1306" delta="unknown" >Output &lt;<arg fmt="%s" index="1">local_txr</arg>&gt; is never assigned.
+</msg>
+
+<msg type="warning" file="Xst" num="647" delta="unknown" >Input &lt;<arg fmt="%s" index="1">processor_txr</arg>&gt; is never used. This port will be preserved and left unconnected if it belongs to a top-level block or it belongs to a sub-block and the hierarchy of this sub-block is preserved.
+</msg>
+
+<msg type="warning" file="Xst" num="653" delta="unknown" >Signal &lt;<arg fmt="%s" index="1">sw_enable</arg>&gt; is used but never assigned. This sourceless signal will be automatically connected to value <arg fmt="%s" index="2">0</arg>.
+</msg>
+
+<msg type="warning" file="Xst" num="653" delta="unknown" >Signal &lt;<arg fmt="%s" index="1">rna_results</arg>&gt; is used but never assigned. This sourceless signal will be automatically connected to value <arg fmt="%s" index="2">00000000</arg>.
+</msg>
+
+<msg type="warning" file="Xst" num="653" delta="unknown" >Signal &lt;<arg fmt="%s" index="1">nB1_request_status</arg>&gt; is used but never assigned. This sourceless signal will be automatically connected to value <arg fmt="%s" index="2">0</arg>.
+</msg>
+
+<msg type="warning" file="Xst" num="2036" delta="unknown" >Inserting OBUF on port &lt;<arg fmt="%s" index="1">ejection_data&lt;7&gt;</arg>&gt; driven by black box &lt;<arg fmt="%s" index="2">Buffers</arg>&gt;. Possible simulation mismatch.
+</msg>
+
+<msg type="warning" file="Xst" num="2036" delta="unknown" >Inserting OBUF on port &lt;<arg fmt="%s" index="1">ejection_data&lt;6&gt;</arg>&gt; driven by black box &lt;<arg fmt="%s" index="2">Buffers</arg>&gt;. Possible simulation mismatch.
+</msg>
+
+<msg type="warning" file="Xst" num="2036" delta="unknown" >Inserting OBUF on port &lt;<arg fmt="%s" index="1">ejection_data&lt;5&gt;</arg>&gt; driven by black box &lt;<arg fmt="%s" index="2">Buffers</arg>&gt;. Possible simulation mismatch.
+</msg>
+
+<msg type="warning" file="Xst" num="2036" delta="unknown" >Inserting OBUF on port &lt;<arg fmt="%s" index="1">ejection_data&lt;4&gt;</arg>&gt; driven by black box &lt;<arg fmt="%s" index="2">Buffers</arg>&gt;. Possible simulation mismatch.
+</msg>
+
+<msg type="warning" file="Xst" num="2036" delta="unknown" >Inserting OBUF on port &lt;<arg fmt="%s" index="1">ejection_data&lt;3&gt;</arg>&gt; driven by black box &lt;<arg fmt="%s" index="2">Buffers</arg>&gt;. Possible simulation mismatch.
+</msg>
+
+<msg type="warning" file="Xst" num="2036" delta="unknown" >Inserting OBUF on port &lt;<arg fmt="%s" index="1">ejection_data&lt;2&gt;</arg>&gt; driven by black box &lt;<arg fmt="%s" index="2">Buffers</arg>&gt;. Possible simulation mismatch.
+</msg>
+
+<msg type="warning" file="Xst" num="2036" delta="unknown" >Inserting OBUF on port &lt;<arg fmt="%s" index="1">ejection_data&lt;1&gt;</arg>&gt; driven by black box &lt;<arg fmt="%s" index="2">Buffers</arg>&gt;. Possible simulation mismatch.
+</msg>
+
+<msg type="warning" file="Xst" num="2036" delta="unknown" >Inserting OBUF on port &lt;<arg fmt="%s" index="1">ejection_data&lt;0&gt;</arg>&gt; driven by black box &lt;<arg fmt="%s" index="2">Buffers</arg>&gt;. Possible simulation mismatch.
 </msg>
 
 </messages>

@@ -10,7 +10,7 @@ Target Device  : xc4vsx35
 Target Package : ff668
 Target Speed   : -10
 Mapper Version : virtex4 -- $Revision: 1.46.12.2 $
-Mapped Date    : Wed Dec 22 16:26:47 2010
+Mapped Date    : Wed Dec 22 17:32:58 2010
 
 ERROR:Map:116 - The design is empty.  No processing will be done.
 ERROR:Map:52 - Problem encountered processing RPMs. 

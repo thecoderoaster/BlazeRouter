@@ -5,7 +5,12 @@
     The structure and the elements are likely to change over the next few releases.
     This means code written to parse this file will need to be revisited each subsequent release.-->
 
-  <application stringID="Xst" timeStamp="Wed Dec 22 16:26:08 2010">
+  <application stringID="Xst" timeStamp="Mon Dec 27 11:56:09 2010">
+    <section stringID="XST_HDL_SYNTHESIS_REPORT">
+      <item dataType="int" stringID="XST_TRISTATES" value="64">
+        <item dataType="int" stringID="XST_1BIT_TRISTATE_BUFFER" value="64"/>
+      </item>
+    </section>
     <section stringID="XST_ADVANCED_HDL_SYNTHESIS_REPORTFOUND_NO_MACRO"/>
     <section stringID="XST_FINAL_REGISTER_REPORTFOUND_NO_MACRO"/>
     <section stringID="XST_PARTITION_REPORT">
@@ -22,22 +27,31 @@
         <item stringID="XST_KEEP_HIERARCHY" value="NO"/>
       </section>
       <section stringID="XST_DESIGN_STATISTICS">
-        <item stringID="XST_IOS" value="80"/>
+        <item stringID="XST_IOS" value="103"/>
       </section>
-      <section stringID="XST_CELL_USAGE"/>
+      <section stringID="XST_CELL_USAGE">
+        <item dataType="int" stringID="XST_BELS" value="2">
+          <item dataType="int" stringID="XST_GND" value="1"/>
+          <item dataType="int" stringID="XST_VCC" value="1"/>
+        </item>
+        <item dataType="int" stringID="XST_IO_BUFFERS" value="98">
+          <item dataType="int" stringID="XST_IBUF" value="18"/>
+          <item dataType="int" stringID="XST_OBUF" value="80"/>
+        </item>
+      </section>
     </section>
     <section stringID="XST_DEVICE_UTILIZATION_SUMMARY">
       <item stringID="XST_SELECTED_DEVICE" value="4vsx35ff668-10"/>
       <item AVAILABLE="15360" dataType="int" stringID="XST_NUMBER_OF_SLICES" value="0"/>
-      <item dataType="int" stringID="XST_NUMBER_OF_IOS" value="80"/>
-      <item AVAILABLE="448" dataType="int" stringID="XST_NUMBER_OF_BONDED_IOBS" value="0"/>
+      <item dataType="int" stringID="XST_NUMBER_OF_IOS" value="103"/>
+      <item AVAILABLE="448" dataType="int" stringID="XST_NUMBER_OF_BONDED_IOBS" value="98"/>
     </section>
     <section stringID="XST_PARTITION_RESOURCE_SUMMARY">
       <section stringID="XST_NO_PARTITIONS_WERE_FOUND_IN_THIS_DESIGN"/>
     </section>
     <section stringID="XST_ERRORS_STATISTICS">
       <item dataType="int" filtered="0" stringID="XST_NUMBER_OF_ERRORS" value="0"/>
-      <item dataType="int" filtered="0" stringID="XST_NUMBER_OF_WARNINGS" value="10"/>
+      <item dataType="int" filtered="0" stringID="XST_NUMBER_OF_WARNINGS" value="42"/>
       <item dataType="int" filtered="0" stringID="XST_NUMBER_OF_INFOS" value="0"/>
     </section>
   </application>
