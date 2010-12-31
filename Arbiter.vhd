@@ -42,28 +42,19 @@ entity Arbiter is
 				s_data_in			: in std_logic_vector (WIDTH downto 0);
 				w_data_in			: in std_logic_vector (WIDTH downto 0);
 				injection_data_in	: in std_logic_vector (WIDTH downto 0);		
-				status_0				: in std_logic_vector (WIDTH downto 0); -- Can be setup as stimulus
-				status_1				: in std_logic_vector (WIDTH downto 0);
-				status_2				: in std_logic_vector (WIDTH downto 0);
-				status_3				: in std_logic_vector (WIDTH downto 0);
-				status_4				: in std_logic_vector (WIDTH downto 0);
-				status_5				: in std_logic_vector (WIDTH downto 0);
-				status_6				: in std_logic_vector (WIDTH downto 0);
-				status_7				: in std_logic_vector (WIDTH downto 0);
-				status_8				: in std_logic_vector (WIDTH downto 0);
-				status_9				: in std_logic_vector (WIDTH downto 0);
+
 				clk					: in std_logic;
 				
-				request_0			: out std_logic;
-				request_1			: out std_logic;
-				request_2			: out std_logic;
-				request_3			: out std_logic;
-				request_4			: out std_logic;
-				request_5			: out std_logic;
-				request_6			: out std_logic;
-				request_7			: out std_logic;
-				request_8			: out std_logic;
-				request_9			: out std_logic;
+				request_0			: in std_logic;
+				request_1			: in std_logic;
+				request_2			: in std_logic;
+				request_3			: in std_logic;
+				request_4			: in std_logic;
+				request_5			: in std_logic;
+				request_6			: in std_logic;
+				request_7			: in std_logic;
+				request_8			: in std_logic;
+				request_9			: in std_logic;
 				
 				buffer_en_0			: out std_logic;
 				buffer_en_1			: out std_logic;
