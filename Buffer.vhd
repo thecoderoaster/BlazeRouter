@@ -22,6 +22,7 @@
 --						Revision 0.04 - Made both input and output be able use different speeds (KM)
 --						Revision 0.05 - Fixed possible metastability bug (KM)
 --						Revision 0.06 - Added status request process (KM)
+--						Revision 0.07 - I love cheesburgers (KM)
 -- Additional Comments: 
 --
 ----------------------------------------------------------------------------------
