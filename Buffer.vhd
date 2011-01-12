@@ -22,7 +22,7 @@
 --						Revision 0.04 - Made both input and output be able use different speeds (KM)
 --						Revision 0.05 - Fixed possible metastability bug (KM)
 --						Revision 0.06 - Added status request process (KM)
---						Revision 0.07 - I love cheesburgers (KM)
+--						Revision 0.07 - Added asynch status pins for linkcontrollers (KM)
 -- Additional Comments: 
 --
 ----------------------------------------------------------------------------------
@@ -39,13 +39,15 @@ use work.router_library.all;
 --use UNISIM.VComponents.all;
 
 entity Fifo_mxn is 
-    port ( 	FIFO_din		: in  	std_logic_vector (WIDTH downto 0);	-- FIFO input port (data port)
-				FIFO_enq		: in  	std_logic;									-- Enqueue item to FIFO buffer	(clocking pin)						
-				FIFO_deq		: in  	std_logic;									-- Dequeue item from FIFO buffer (clocking pin)
-				FIFO_rst		: in		std_logic;									-- Asynch reset
-				FIFO_strq   : in 		std_logic;									-- Status request int
-				FIFO_qout 	: out 	std_logic_vector (WIDTH downto 0);	-- FIFO output port (data port)						
-				FIFO_status	: out 	std_logic_vector (1 downto 0));		-- FIFO status flags							
+    port ( 	FIFO_din			: in  	std_logic_vector (WIDTH downto 0);	-- FIFO input port (data port)
+				FIFO_enq			: in  	std_logic;									-- Enqueue item to FIFO buffer	(clocking pin)						
+				FIFO_deq			: in  	std_logic;									-- Dequeue item from FIFO buffer (clocking pin)
+				FIFO_rst			: in		std_logic;									-- Asynch reset
+				FIFO_strq   	: in 		std_logic;									-- Status request int
+				FIFO_qout 		: out 	std_logic_vector (WIDTH downto 0);	-- FIFO output port (data port)						
+				FIFO_status		: out 	std_logic_vector (1 downto 0);		-- FIFO status flags
+				FIFO_aStatus	: out		std_logic_vector (1 downto 0));		-- FIFO asynch status flags (for lc)
+										
 end Fifo_mxn;
 
 architecture rtl of FIFO_MXN is
@@ -158,5 +160,6 @@ begin
 	-- The buffer will still report full until the need_tlInc flag is cleared
 	full_flag <= '1' when (((tlCnt + 1) = hdCnt) and almost_full_flag = '0') else '0';
 	empty_flag <= '1' when (tlCnt = hdCnt) else '0';
+	FIFO_aStatus <= full_flag & empty_flag;
 
 end rtl;
