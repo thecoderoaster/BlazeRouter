@@ -21,6 +21,7 @@
 -- Revision: 
 -- 					 Revision 0.01 - File Created
 --						 Revision 0.02 - Added additional modules (KVH)
+--					Revision 0.03 - Added functional code (KM) (not synthed yet)
 -- Additional Comments: 
 --
 ----------------------------------------------------------------------------------
@@ -42,7 +43,7 @@ entity SwitchUnit is
 				south_in 	: in std_logic_vector (WIDTH downto 0);
 				west_in		: in std_logic_vector (WIDTH downto 0);
 				injection	: in std_logic_vector (WIDTH downto 0);		-- From Processor Logic Bus
-				rna_result	: in std_logic_vector (WIDTH downto 0);		-- Routing and Arbritration Results
+				rna_result	: in std_logic_vector (9 downto 0);		-- Routing and Arbritration Results
 				switch_en	: in std_logic;
 				
 				north_out	: out std_logic_vector (WIDTH downto 0);		-- Outgoing traffic
@@ -53,8 +54,57 @@ entity SwitchUnit is
 end SwitchUnit;
 
 architecture rtl of SwitchUnit is
-
+	
+	signal northsw	: std_logic_vector(2 downto 0);
+	signal eastsw	: std_logic_vector(2 downto 0);
+	signal southsw	: std_logic_vector(2 downto 0);
+	signal westsw	: std_logic_vector(2 downto 0);
+	signal procsw	: std_logic_vector(2 downto 0);
+	
 begin
+
+	-- North out uses bits 0 and 1
+	-- East out uses bits 2 and 3
+	-- South out uses bits 4 and 5
+	-- West out uses bits 6 and 7
+	-- ejection uses bits 8 and 9	
+
+	northsw <= switch_en & rna_result(1) & rna_result(0);
+	eastsw <= switch_en & rna_result(3) & rna_result(2);
+	southsw <= switch_en & rna_result(5) & rna_result(4);
+	westsw <= switch_en & rna_result(7) & rna_result(6);
+	procsw <= switch_en & rna_result(9) & rna_result(8);
+
+
+	-- north switch
+	north_out <= east_in when(northsw = "100") else
+			 south_in when(northsw = "101") else
+			 west_in when(northsw = "110") else
+			 injection when(northsw = "111");
+	
+	-- east switch
+	east_out <=  south_in when(eastsw = "100") else
+			 west_in when(eastsw = "101") else
+			 north_in when(eastsw = "110") else
+			 injection when(eastsw = "111");
+	
+	-- south switch
+	south_out <= west_in when(southsw = "100") else
+			 north_in when(southsw = "101") else
+			 east_in when(southsw = "110") else
+			 injection when(southsw = "111");
+	
+	-- west switch
+	west_out <=  north_in when(westsw = "100") else
+			 east_in when(westsw = "101") else
+			 south_in when(westsw = "110") else
+			 injection when(westsw = "111");
+			
+	-- ejection switch
+	ejection <=  north_in when(procsw = "100") else
+			 east_in when(procsw = "101") else
+			 south_in when(procsw = "110") else
+			 west_in when(procsw = "111");
 
 end rtl;
 
