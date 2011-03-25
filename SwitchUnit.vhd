@@ -21,7 +21,8 @@
 -- Revision: 
 -- 					 Revision 0.01 - File Created
 --						 Revision 0.02 - Added additional modules (KVH)
---					Revision 0.03 - Added functional code (KM) (not synthed yet)
+--						 Revision 0.03 - Added functional code (KM) (not synthed yet)
+--						 Revision 0.04 - Added additional signals (KM) (synthed)
 -- Additional Comments: 
 --
 ----------------------------------------------------------------------------------
@@ -38,73 +39,88 @@ use work.router_library.all;
 --use UNISIM.VComponents.all;
 
 entity SwitchUnit is
-	port ( 	north_in 	: in std_logic_vector (WIDTH downto 0);		-- Incoming traffic
-				east_in 		: in std_logic_vector (WIDTH downto 0);
-				south_in 	: in std_logic_vector (WIDTH downto 0);
-				west_in		: in std_logic_vector (WIDTH downto 0);
-				injection	: in std_logic_vector (WIDTH downto 0);		-- From Processor Logic Bus
-				rna_result	: in std_logic_vector (9 downto 0);		-- Routing and Arbritration Results
-				switch_en	: in std_logic;
+	port ( 	sw_northIn 	: in std_logic_vector (WIDTH downto 0);		-- Incoming traffic from VC units
+				sw_eastIn 	: in std_logic_vector (WIDTH downto 0);
+				sw_southIn 	: in std_logic_vector (WIDTH downto 0);
+				sw_westIn	: in std_logic_vector (WIDTH downto 0);
+				sw_injct		: in std_logic_vector (WIDTH downto 0);		-- From Processor Logic Bus
+				sw_ctrlPkt	: in std_logic_vector (WIDTH downto 0);		-- From RNA (control packet)			
+				sw_ejctSel	: in std_logic_vector (1 downto 0);				-- selects for mux/dmux from rna
+				sw_northSel	: in std_logic_vector (2 downto 0);
+				sw_eastSel	: in std_logic_vector (2 downto 0);
+				sw_southSel	: in std_logic_vector (2 downto 0);
+				sw_westSel	: in std_logic_vector (2 downto 0);
 				
-				north_out	: out std_logic_vector (WIDTH downto 0);		-- Outgoing traffic
-				east_out		: out std_logic_vector (WIDTH downto 0);	
-				south_out	: out std_logic_vector (WIDTH downto 0);
-				west_out 	: out std_logic_vector (WIDTH downto 0);
-				ejection		: out std_logic_vector (WIDTH downto 0));		-- To Processor Logic Bus
+				
+				sw_northOut	: out std_logic_vector (WIDTH downto 0);		-- Outgoing traffic
+				sw_eastOut	: out std_logic_vector (WIDTH downto 0);	
+				sw_southOut	: out std_logic_vector (WIDTH downto 0);
+				sw_westOut 	: out std_logic_vector (WIDTH downto 0);
+				sw_rnaCtrl  : out std_logic_vector (WIDTH downto 0);		-- Control packet to RNA
+				sw_ejct		: out std_logic_vector (WIDTH downto 0));		-- To Processor Logic Bus
 end SwitchUnit;
 
 architecture rtl of SwitchUnit is
 	
-	signal northsw	: std_logic_vector(2 downto 0);
-	signal eastsw	: std_logic_vector(2 downto 0);
-	signal southsw	: std_logic_vector(2 downto 0);
-	signal westsw	: std_logic_vector(2 downto 0);
-	signal procsw	: std_logic_vector(2 downto 0);
+	-- injection forwarder
+	signal injctPkt	: std_logic_vector (WIDTH downto 0);
+
+	-- control sense
+	alias senseOp 		: std_logic is sw_injct(0);
 	
 begin
-
-	-- North out uses bits 0 and 1
-	-- East out uses bits 2 and 3
-	-- South out uses bits 4 and 5
-	-- West out uses bits 6 and 7
-	-- ejection uses bits 8 and 9	
-
-	northsw <= switch_en & rna_result(1) & rna_result(0);
-	eastsw <= switch_en & rna_result(3) & rna_result(2);
-	southsw <= switch_en & rna_result(5) & rna_result(4);
-	westsw <= switch_en & rna_result(7) & rna_result(6);
-	procsw <= switch_en & rna_result(9) & rna_result(8);
-
-
-	-- north switch
-	north_out <= east_in when(northsw = "100") else
-			 south_in when(northsw = "101") else
-			 west_in when(northsw = "110") else
-			 injection when(northsw = "111");
 	
-	-- east switch
-	east_out <=  south_in when(eastsw = "100") else
-			 west_in when(eastsw = "101") else
-			 north_in when(eastsw = "110") else
-			 injection when(eastsw = "111");
+	-- selection table
+	-- north = 0
+	-- east = 1
+	-- south = 2
+	-- west = 3
+	-- injection = 5
+	-- control = 7	
 	
-	-- south switch
-	south_out <= west_in when(southsw = "100") else
-			 north_in when(southsw = "101") else
-			 east_in when(southsw = "110") else
-			 injection when(southsw = "111");
+	-- Dmux for injection (injctPkt, rna)
+	sw_rnaCtrl <= sw_injct when (senseOp = '1') else (others => '0');
+	injctPkt <= sw_injct when (senseOp = '0') else (others => '0');
 	
-	-- west switch
-	west_out <=  north_in when(westsw = "100") else
-			 east_in when(westsw = "101") else
-			 south_in when(westsw = "110") else
-			 injection when(westsw = "111");
+	
+	-- north switch (mux e, s, w, in, rna)
+	sw_northOut <= sw_eastIn when(sw_northSel = "001") else
+						sw_southIn when(sw_northSel = "010") else
+						sw_westIn when(sw_northSel = "011") else
+						injctPkt when(sw_northSel = "101") else
+						sw_ctrlPkt when(sw_northSel = "111") else
+						(others => '0');
+	
+	-- east switch (mux s, w, n, in, rna)
+	sw_eastOut <=	sw_southIn when(sw_eastSel = "010") else
+						sw_westIn when(sw_eastSel = "011") else
+						sw_northIn when(sw_eastSel = "000") else
+						injctPkt when(sw_eastSel = "101") else
+						sw_ctrlPkt when(sw_eastSel = "111") else
+						(others => '0');
+	
+	-- south switch (w, n, e, in, rna)
+	sw_southOut <=	sw_westIn when(sw_southSel = "011") else
+						sw_northIn when(sw_southSel = "000") else
+						sw_eastIn when(sw_southSel = "001") else
+						injctPkt when(sw_southSel = "101") else
+						sw_ctrlPkt when(sw_southSel = "111") else
+						(others => '0');
+	
+	-- west switch (n, e, s, in, rna)
+	sw_westOut <=	sw_northIn when(sw_westSel = "000") else
+						sw_eastIn when(sw_westSel = "001") else
+						sw_southIn when(sw_westSel = "010") else
+						injctPkt when(sw_westSel = "101") else
+						sw_ctrlPkt when(sw_westSel = "111") else
+						(others => '0');
 			
-	-- ejection switch
-	ejection <=  north_in when(procsw = "100") else
-			 east_in when(procsw = "101") else
-			 south_in when(procsw = "110") else
-			 west_in when(procsw = "111");
+	-- ejection switch (n, e, s, w)
+	sw_ejct <= sw_northIn when(sw_ejctSel = "000") else
+					sw_eastIn when(sw_ejctSel = "001") else
+					sw_southIn when(sw_ejctSel = "010") else
+					sw_westIn when(sw_ejctSel = "011") else
+					(others => '0');
 
 end rtl;
 

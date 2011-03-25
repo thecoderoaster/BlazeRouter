@@ -11,8 +11,8 @@ use ieee.std_logic_unsigned.all;
 
 package router_library is
 	--Universal constants Go Here (these are things that determine dimensions and can be changed on the fly)
-	constant WIDTH		: integer := 7;
-	constant SIZE		: integer := 63;
+	constant WIDTH		: integer := 31;
+	constant SIZE		: integer := 10;
 	
 	--Buffer Status Codes Go Here
 	constant FULL_FIFO				: std_logic_vector (1 downto 0) := "10";		-- CODE: 0x02 = FIFO full

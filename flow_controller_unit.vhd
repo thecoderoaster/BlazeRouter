@@ -37,156 +37,102 @@ use work.router_library.all;
 
 entity fcu is
 			-- ports use the naming convention (neighbor_signalName. i.e. w_dataIn means the incomming data from the neighbor to the west)
-	port( n_dataIn 		: in  	STD_LOGIC_VECTOR (WIDTH downto 0); 
-			n_dGood 			: in  	STD_LOGIC;									
-			n_ctrlFlg 		: in  	STD_LOGIC;									
-			n_vcStat 		: in  	STD_LOGIC_VECTOR (1 downto 0);		
-			n_rnaCTR 		: in  	STD_LOGIC;									
-			n_rnaSel 		: in  	STD_LOGIC_VECTOR (1 downto 0);									
-			n_doEnq			: in		STD_LOGIC;									
-			n_vcData 		: out  	STD_LOGIC_VECTOR (WIDTH downto 0);	
-			n_rnaCtrl 		: out  	STD_LOGIC_VECTOR (WIDTH downto 0);	
-			n_CTR 			: out  	STD_LOGIC;									
-			n_stat 			: out  	STD_LOGIC_VECTOR (1 downto 0);		
-			n_vcSel 			: out  	STD_LOGIC_VECTOR (1 downto 0);		
-			n_rnaCtrlFlg 	: out  	STD_LOGIC;									
-			n_rnaDg			: out		STD_LOGIC;									
-			n_vcEnq 			: out  	STD_LOGIC;
+	port( n_CTRflg			: in		STD_LOGIC;									-- Clear To Recieve flag (from RNA)
+			n_dataIn 		: in  	STD_LOGIC_VECTOR (WIDTH downto 0); 	-- Input data port (from neighbor)
+			n_dStrb 			: in  	STD_LOGIC;									-- Data strobe (from neighbor)
+			n_vcFull 		: in  	STD_LOGIC;									-- Full status flag (from VC)
+			n_vcData 		: out  	STD_LOGIC_VECTOR (WIDTH downto 0);	-- Data port (to VC)
+			n_rnaCtrl	 	: out  	STD_LOGIC_VECTOR (WIDTH downto 0);	-- Data port (to RNA)
+			n_rnaCtrlStrb 	: out  	STD_LOGIC;									-- Control packet strobe (to RNA)
+			n_CTR				: out		STD_LOGIC;									-- Clear to Recieve (to neighbor)
+			n_vcEnq 			: out  	STD_LOGIC;									-- enqueue command from RNA (to VC)
 			
-			e_dataIn 		: in  	STD_LOGIC_VECTOR (WIDTH downto 0); 
-			e_dGood 			: in  	STD_LOGIC;									
-			e_ctrlFlg 		: in  	STD_LOGIC;									
-			e_vcStat 		: in  	STD_LOGIC_VECTOR (1 downto 0);		
-			e_rnaCTR 		: in  	STD_LOGIC;									
-			e_rnaSel 		: in  	STD_LOGIC_VECTOR (1 downto 0);									
-			e_doEnq			: in		STD_LOGIC;									
-			e_vcData 		: out  	STD_LOGIC_VECTOR (WIDTH downto 0);	
-			e_rnaCtrl 		: out  	STD_LOGIC_VECTOR (WIDTH downto 0);	
-			e_CTR 			: out  	STD_LOGIC;									
-			e_stat 			: out  	STD_LOGIC_VECTOR (1 downto 0);		
-			e_vcSel 			: out  	STD_LOGIC_VECTOR (1 downto 0);		
-			e_rnaCtrlFlg 	: out  	STD_LOGIC;									
-			e_rnaDg			: out		STD_LOGIC;									
-			e_vcEnq 			: out  	STD_LOGIC;
+			e_CTRflg			: in		STD_LOGIC;									-- Clear To Recieve flag (from RNA)
+			e_dataIn 		: in  	STD_LOGIC_VECTOR (WIDTH downto 0); 	-- Input data port (from neighbor)
+			e_dStrb 			: in  	STD_LOGIC;									-- Data strobe (from neighbor)
+			e_vcFull 		: in  	STD_LOGIC;									-- Full status flag (from VC)
+			e_vcData 		: out  	STD_LOGIC_VECTOR (WIDTH downto 0);	-- Data port (to VC)
+			e_rnaCtrl	 	: out  	STD_LOGIC_VECTOR (WIDTH downto 0);	-- Data port (to RNA)
+			e_rnaCtrlStrb 	: out  	STD_LOGIC;									-- Control packet strobe (to RNA)
+			e_CTR				: out		STD_LOGIC;									-- Clear to Recieve (to neighbor)
+			e_vcEnq 			: out  	STD_LOGIC;									-- enqueue command from RNA (to VC)
 			
-			s_dataIn 		: in  	STD_LOGIC_VECTOR (WIDTH downto 0); 
-			s_dGood 			: in  	STD_LOGIC;									
-			s_ctrlFlg 		: in  	STD_LOGIC;									
-			s_vcStat 		: in  	STD_LOGIC_VECTOR (1 downto 0);		
-			s_rnaCTR 		: in  	STD_LOGIC;									
-			s_rnaSel 		: in  	STD_LOGIC_VECTOR (1 downto 0);										
-			s_doEnq			: in		STD_LOGIC;									
-			s_vcData 		: out  	STD_LOGIC_VECTOR (WIDTH downto 0);	
-			s_rnaCtrl 		: out  	STD_LOGIC_VECTOR (WIDTH downto 0);	
-			s_CTR 			: out  	STD_LOGIC;									
-			s_stat 			: out  	STD_LOGIC_VECTOR (1 downto 0);		
-			s_vcSel 			: out  	STD_LOGIC_VECTOR (1 downto 0);		
-			s_rnaCtrlFlg 	: out  	STD_LOGIC;									
-			s_rnaDg			: out		STD_LOGIC;									
-			s_vcEnq 			: out  	STD_LOGIC;
+			s_CTRflg			: in		STD_LOGIC;									-- Clear To Recieve flag (from RNA)
+			s_dataIn 		: in  	STD_LOGIC_VECTOR (WIDTH downto 0); 	-- Input data port (from neighbor)
+			s_dStrb 			: in  	STD_LOGIC;									-- Data strobe (from neighbor)
+			s_vcFull 		: in  	STD_LOGIC;									-- Full status flag (from VC)
+			s_vcData 		: out  	STD_LOGIC_VECTOR (WIDTH downto 0);	-- Data port (to VC)
+			s_rnaCtrl	 	: out  	STD_LOGIC_VECTOR (WIDTH downto 0);	-- Data port (to RNA)
+			s_rnaCtrlStrb 	: out  	STD_LOGIC;									-- Control packet strobe (to RNA)
+			s_CTR				: out		STD_LOGIC;									-- Clear to Recieve (to neighbor)
+			s_vcEnq 			: out  	STD_LOGIC;									-- enqueue command from RNA (to VC)
 			
-			w_dataIn 		: in  	STD_LOGIC_VECTOR (WIDTH downto 0); 
-			w_dGood 			: in  	STD_LOGIC;									
-			w_ctrlFlg 		: in  	STD_LOGIC;									
-			w_vcStat 		: in  	STD_LOGIC_VECTOR (1 downto 0);		
-			w_rnaCTR 		: in  	STD_LOGIC;									
-			w_rnaSel 		: in  	STD_LOGIC_VECTOR (1 downto 0);									
-			w_doEnq			: in		STD_LOGIC;									
-			w_vcData 		: out  	STD_LOGIC_VECTOR (WIDTH downto 0);	
-			w_rnaCtrl 		: out  	STD_LOGIC_VECTOR (WIDTH downto 0);	
-			w_CTR 			: out  	STD_LOGIC;									
-			w_stat 			: out  	STD_LOGIC_VECTOR (1 downto 0);		
-			w_vcSel 			: out  	STD_LOGIC_VECTOR (1 downto 0);		
-			w_rnaCtrlFlg 	: out  	STD_LOGIC;									
-			w_rnaDg			: out		STD_LOGIC;									
-			w_vcEnq 			: out  	STD_LOGIC);
+			w_CTRflg			: in		STD_LOGIC;									-- Clear To Recieve flag (from RNA)
+			w_dataIn 		: in  	STD_LOGIC_VECTOR (WIDTH downto 0); 	-- Input data port (from neighbor)
+			w_dStrb 			: in  	STD_LOGIC;									-- Data strobe (from neighbor)
+			w_vcFull 		: in  	STD_LOGIC;									-- Full status flag (from VC)
+			w_vcData 		: out  	STD_LOGIC_VECTOR (WIDTH downto 0);	-- Data port (to VC)
+			w_rnaCtrl	 	: out  	STD_LOGIC_VECTOR (WIDTH downto 0);	-- Data port (to RNA)
+			w_rnaCtrlStrb 	: out  	STD_LOGIC;									-- Control packet strobe (to RNA)
+			w_CTR				: out		STD_LOGIC;									-- Clear to Recieve (to neighbor)
+			w_vcEnq 			: out  	STD_LOGIC);									-- enqueue command from RNA (to VC)
 end fcu;
 
 
 architecture fcu_4 of fcu is
 
 	component flow_control is
-		 Port ( fc_dataIn 		: in  	STD_LOGIC_VECTOR (WIDTH downto 0); 	-- Input data port (from neighbor dmuxed ctrld by fc_dGood)
-				  fc_dGood 			: in  	STD_LOGIC;									-- Data good strobe (from neighbor)
-				  fc_ctrlFlg 		: in  	STD_LOGIC;									-- Control packet indicator (from neighbor)
-				  fc_vcStat 		: in  	STD_LOGIC_VECTOR (1 downto 0);		-- Status from local Virtual Channel (to neighbor and RNA)
-				  fc_rnaCTR 		: in  	STD_LOGIC;									-- Clear to Recieve flag (to neighbor)
-				  fc_rnaSel 		: in  	STD_LOGIC_VECTOR (1 downto 0);		-- Buffer select (to VC)
-				  fc_doEnq			: in		STD_LOGIC;									-- Tell VC to enqueue data (from RNA)
+		Port (  fc_CTRflg			: in		STD_LOGIC;									-- Clear To Recieve flag (from RNA)
+				  fc_dataIn 		: in  	STD_LOGIC_VECTOR (WIDTH downto 0); 	-- Input data port (from neighbor)
+				  fc_dStrb 			: in  	STD_LOGIC;									-- Data strobe (from neighbor)
+				  fc_vcFull 		: in  	STD_LOGIC;									-- Full status flag (from VC)
 				  fc_vcData 		: out  	STD_LOGIC_VECTOR (WIDTH downto 0);	-- Data port (to VC)
-				  fc_rnaCtrl 		: out  	STD_LOGIC_VECTOR (WIDTH downto 0);	-- Data port (to RNA)
-				  fc_CTR 			: out  	STD_LOGIC;									-- Clear to Recieve flag (from RNA)
-				  fc_stat 			: out  	STD_LOGIC_VECTOR (1 downto 0);		-- VC status (to RNA and neighbor)
-				  fc_vcSel 			: out  	STD_LOGIC_VECTOR (1 downto 0);		-- VC select (to VC)
-				  fc_rnaCtrlFlg 	: out  	STD_LOGIC;									-- Control packet indicator (to RNA)
-				  fc_rnaDg			: out		STD_LOGIC;									-- Data good strobe (to RNA)
+				  fc_rnaCtrl	 	: out  	STD_LOGIC_VECTOR (WIDTH downto 0);	-- Data port (to RNA)
+				  fc_rnaCtrlStrb 	: out  	STD_LOGIC;									-- Control packet strobe (to RNA)
+				  fc_CTR				: out		STD_LOGIC;									-- Clear to Recieve (to neighbor)
 				  fc_vcEnq 			: out  	STD_LOGIC);									-- enqueue command from RNA (to VC)
 	end component;
 
 begin
 
-	FC_NORTH: flow_control port map (n_dataIn,
-												n_dGood, 									
-												n_ctrlFlg, 										
-												n_vcStat, 				
-												n_rnaCTR, 											
-												n_rnaSel, 										
-												n_doEnq,												
-												n_vcData, 		
-												n_rnaCtrl, 		
-												n_CTR, 											
-												n_stat, 		
-												n_vcSel,		
-												n_rnaCtrlFlg,									
-												n_rnaDg,								
+	FC_NORTH: flow_control port map (n_CTRflg,
+												n_dataIn,
+												n_dStrb,
+												n_vcFull,
+												n_vcData,
+												n_rnaCtrl,
+												n_rnaCtrlStrb,
+												n_CTR,		
 												n_vcEnq);
 
-	FC_EAST: flow_control port map  (e_dataIn,
-												e_dGood, 									
-												e_ctrlFlg, 										
-												e_vcStat, 				
-												e_rnaCTR, 											
-												e_rnaSel, 										
-												e_doEnq,												
-												e_vcData, 		
-												e_rnaCtrl, 		
-												e_CTR, 											
-												e_stat, 		
-												e_vcSel,		
-												e_rnaCtrlFlg,									
-												e_rnaDg,								
+	FC_EAST: flow_control port map  (e_CTRflg,
+												e_dataIn,
+												e_dStrb,
+												e_vcFull,
+												e_vcData,
+												e_rnaCtrl,
+												e_rnaCtrlStrb,
+												e_CTR,		
 												e_vcEnq);
 
-	FC_SOUTH: flow_control port map (s_dataIn,
-												s_dGood, 									
-												s_ctrlFlg, 										
-												s_vcStat, 				
-												s_rnaCTR, 											
-												s_rnaSel, 										
-												s_doEnq,												
-												s_vcData, 		
-												s_rnaCtrl, 		
-												s_CTR, 											
-												s_stat, 		
-												s_vcSel,		
-												s_rnaCtrlFlg,									
-												s_rnaDg,								
+	FC_SOUTH: flow_control port map (s_CTRflg,
+												s_dataIn,
+												s_dStrb,
+												s_vcFull,
+												s_vcData,
+												s_rnaCtrl,
+												s_rnaCtrlStrb,
+												s_CTR,		
 												s_vcEnq);
 
-	FC_WEST: flow_control port map  (w_dataIn,
-												w_dGood, 									
-												w_ctrlFlg, 										
-												w_vcStat, 				
-												w_rnaCTR, 											
-												w_rnaSel, 										
-												w_doEnq,												
-												w_vcData, 		
-												w_rnaCtrl, 		
-												w_CTR, 											
-												w_stat, 		
-												w_vcSel,		
-												w_rnaCtrlFlg,									
-												w_rnaDg,								
+	FC_WEST: flow_control port map  (w_CTRflg,
+												w_dataIn,
+												w_dStrb,
+												w_vcFull,
+												w_vcData,
+												w_rnaCtrl,
+												w_rnaCtrlStrb,
+												w_CTR,		
 												w_vcEnq);
 												
 end fcu_4;

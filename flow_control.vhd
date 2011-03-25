@@ -14,6 +14,7 @@
 -- 					 Revision 0.01 - File Created
 --						 Revision 0.02 - Created entity outline (KM)
 --                 Revision 0.03 - Created implmentation code (KM)
+--						 Revision 0.04	- Changed implmentation (KM)
 -- Additional Comments: 
 --
 ----------------------------------------------------------------------------------
@@ -34,50 +35,44 @@ use work.router_library.all;
 --use UNISIM.VComponents.all;
 
 entity flow_control is
-    Port ( fc_dataIn 		: in  	STD_LOGIC_VECTOR (WIDTH downto 0); 	-- Input data port (from neighbor dmuxed ctrld by fc_dGood)
-           fc_dGood 			: in  	STD_LOGIC;									-- Data good strobe (from neighbor)
-           fc_ctrlFlg 		: in  	STD_LOGIC;									-- Control packet indicator (from neighbor)
-           fc_vcStat 		: in  	STD_LOGIC_VECTOR (1 downto 0);		-- Status from local Virtual Channel (to neighbor and RNA)
-           fc_rnaCTR 		: in  	STD_LOGIC;									-- Clear to Recieve flag (to neighbor)
-           fc_rnaSel 		: in  	STD_LOGIC_VECTOR (1 downto 0);		-- Buffer select (to VC)
-			  fc_doEnq			: in		STD_LOGIC;									-- Tell VC to enqueue data (from RNA)
+	Port (  fc_CTRflg			: in		STD_LOGIC;									-- Clear To Recieve flag (from RNA)
+			  fc_dataIn 		: in  	STD_LOGIC_VECTOR (WIDTH downto 0); 	-- Input data port (from neighbor)
+           fc_dStrb 			: in  	STD_LOGIC;									-- Data strobe (from neighbor)
+           fc_vcFull 		: in  	STD_LOGIC;									-- Full status flag (from VC)
 			  fc_vcData 		: out  	STD_LOGIC_VECTOR (WIDTH downto 0);	-- Data port (to VC)
-           fc_rnaCtrl 		: out  	STD_LOGIC_VECTOR (WIDTH downto 0);	-- Data port (to RNA)
-			  fc_CTR 			: out  	STD_LOGIC;									-- Clear to Recieve flag (from RNA)
-           fc_stat 			: out  	STD_LOGIC_VECTOR (1 downto 0);		-- VC status (to RNA and neighbor)
-			  fc_vcSel 			: out  	STD_LOGIC_VECTOR (1 downto 0);		-- VC select (to VC)
-           fc_rnaCtrlFlg 	: out  	STD_LOGIC;									-- Control packet indicator (to RNA)
-			  fc_rnaDg			: out		STD_LOGIC;									-- Data good strobe (to RNA)
+           fc_rnaCtrl	 	: out  	STD_LOGIC_VECTOR (WIDTH downto 0);	-- Data port (to RNA)
+           fc_rnaCtrlStrb 	: out  	STD_LOGIC;									-- Control packet strobe (to RNA)
+			  fc_CTR				: out		STD_LOGIC;									-- Clear to Recieve (to neighbor)
            fc_vcEnq 			: out  	STD_LOGIC);									-- enqueue command from RNA (to VC)
 end flow_control;
 
 architecture fc_4 of flow_control is
 
+	signal dStrbInd	: STD_LOGIC;
+	signal CTRInd	: STD_LOGIC;
+
+	-- Control packet sense (for now it is assumed if LSB is high in a packet then it is of the control variety)
+	-- Its assumed that the control packet will get consumed and a new one will be created
+	alias  senseOp 	:STD_LOGIC is fc_dataIn(0);
+	
 begin
 
 -- This is setup is pretty much a large forwarder with dmux for control packet forwarding to RNA.	
 
--- Dmux for data/control packets
-fc_vcData <= fc_dataIn when(fc_ctrlFlg = '0') else (others => '0');
-fc_rnaCtrl <= fc_dataIn when(fc_ctrlFlg = '1') else (others => '0');
+-- Data Bus
+fc_vcData <= fc_dataIn;
+fc_rnaCtrl <= fc_dataIn;
 
--- Control flag indicator
-fc_rnaCtrlFlg <= fc_ctrlFlg;
+-- Dmux for control packet sense
+fc_rnaCtrlStrb <= fc_dStrb when (senseOp = '1') else '0';
+dStrbInd <= fc_dStrb when (senseOp = '0') else '0';
 
--- Data good strobe
-fc_rnaDg <= fc_dGood;
+-- Clear to recieve handler
+CTRInd <= fc_vcFull and fc_CTRflg;
+fc_CTR <= CTRInd;
 
--- VC enqueue signal
-fc_vcEnq <= fc_doEnq;
-
--- virtual channel select
-fc_vcSel <= fc_rnaSel; 
-
--- Status flags
-fc_stat <= fc_vcStat;
-
--- CTR indicator
-fc_CTR <= fc_rnaCTR;
+-- VC Data strobe handler
+fc_vcEnq <= CTRInd and dStrbInd;
 
 end fc_4;
 
