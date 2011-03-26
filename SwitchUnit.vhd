@@ -51,7 +51,7 @@ entity SwitchUnit is
 				sw_southSel	: in std_logic_vector (2 downto 0);
 				sw_westSel	: in std_logic_vector (2 downto 0);
 				
-				
+				sw_rnaCtFl	: out std_logic;										-- control packet indicator flag
 				sw_northOut	: out std_logic_vector (WIDTH downto 0);		-- Outgoing traffic
 				sw_eastOut	: out std_logic_vector (WIDTH downto 0);	
 				sw_southOut	: out std_logic_vector (WIDTH downto 0);
@@ -77,6 +77,8 @@ begin
 	-- west = 3
 	-- injection = 5
 	-- control = 7	
+	
+	sw_rnaCtFl <= senseOp;
 	
 	-- Dmux for injection (injctPkt, rna)
 	sw_rnaCtrl <= sw_injct when (senseOp = '1') else (others => '0');
