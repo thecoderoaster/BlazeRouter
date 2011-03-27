@@ -68,7 +68,7 @@ fc_rnaCtrlStrb <= fc_dStrb when (senseOp = '1') else '0';
 dStrbInd <= fc_dStrb when (senseOp = '0') else '0';
 
 -- Clear to recieve handler
-CTRInd <= fc_vcFull and fc_CTRflg;
+CTRInd <= (not fc_vcFull) and fc_CTRflg;
 fc_CTR <= CTRInd;
 
 -- VC Data strobe handler
