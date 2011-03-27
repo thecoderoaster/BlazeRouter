@@ -45,7 +45,7 @@ entity SwitchUnit is
 				sw_westIn	: in std_logic_vector (WIDTH downto 0);
 				sw_injct		: in std_logic_vector (WIDTH downto 0);		-- From Processor Logic Bus
 				sw_ctrlPkt	: in std_logic_vector (WIDTH downto 0);		-- From RNA (control packet)			
-				sw_ejctSel	: in std_logic_vector (1 downto 0);				-- selects for mux/dmux from rna
+				sw_ejctSel	: in std_logic_vector (2 downto 0);				-- selects for mux/dmux from rna
 				sw_northSel	: in std_logic_vector (2 downto 0);
 				sw_eastSel	: in std_logic_vector (2 downto 0);
 				sw_southSel	: in std_logic_vector (2 downto 0);
@@ -122,6 +122,7 @@ begin
 					sw_eastIn when(sw_ejctSel = "001") else
 					sw_southIn when(sw_ejctSel = "010") else
 					sw_westIn when(sw_ejctSel = "011") else
+					sw_ctrlPkt when (sw_ejctSel = "111") else
 					(others => '0');
 
 end rtl;
