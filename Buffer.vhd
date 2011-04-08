@@ -23,6 +23,7 @@
 --						Revision 0.05 - Fixed possible metastability bug (KM)
 --						Revision 0.06 - Added status request process (KM)
 --						Revision 0.07 - Added asynch status pins for linkcontrollers (KM)
+--						Revision 0.08 - Verified operation with testbench holds 1 extra flit (KM)
 -- Additional Comments: 
 --
 ----------------------------------------------------------------------------------
@@ -84,6 +85,11 @@ begin
 			-- there must be no full condition
 			-- writing is immediate
 			-- tell the flag processes that a write has occured
+			
+			-- Check if empty, if so, then reset the need inc flag before proceeding
+			if(empty_flag = '1') then
+				need_tlInc_flag <= '0';
+			end if;
 			
 			if(full_flag = '0') then
 				
