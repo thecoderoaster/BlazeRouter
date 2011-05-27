@@ -15,6 +15,7 @@
 --						 Revision 0.02 - Created entity outline (KM)
 --                 Revision 0.03 - Created implmentation code (KM)
 --						 Revision 0.04 - Changed some functionality to better communicate with FC (KM)
+--						 Revision 0.05 - Made strobed status select indpendent from output select (KM)
 -- Additional Comments: 
 --
 ----------------------------------------------------------------------------------
@@ -40,6 +41,7 @@ entity virtual_channel is
 				VC_deq 		: in  	STD_LOGIC;									-- Dequeue latch input (from RNA) (dmuxed)
 				VC_rnaSelI 	: in  	STD_LOGIC_VECTOR (1 downto 0);		-- FIFO select for input (from RNA) 
 				VC_rnaSelO 	: in  	STD_LOGIC_VECTOR (1 downto 0);		-- FIFO select for output (from RNA) 
+				VC_rnaSelS	: in		STD_LOGIC_VECTOR (1 downto 0);		-- FIFO select for status (from RNA)
 				VC_rst 		: in  	STD_LOGIC;									-- Master Reset (global)
 				VC_strq 		: in  	STD_LOGIC;									-- Status request (from RNA) (dmuxed)
 				VC_qout 		: out  	STD_LOGIC_VECTOR (WIDTH downto 0);	-- Output data port (to Switch) (muxed) 
@@ -187,10 +189,10 @@ begin
 	deqD <= VC_deq when (VC_rnaSelO = "11") else '0';
 	
 	-- status strobe demux
-	strqA <= VC_strq when (VC_rnaSelO = "00") else '0';
-	strqB <= VC_strq when (VC_rnaSelO = "01") else '0';
-	strqC <= VC_strq when (VC_rnaSelO = "10") else '0';
-	strqD <= VC_strq when (VC_rnaSelO = "11") else '0';	
+	strqA <= VC_strq when (VC_rnaSelS = "00") else '0';
+	strqB <= VC_strq when (VC_rnaSelS = "01") else '0';
+	strqC <= VC_strq when (VC_rnaSelS = "10") else '0';
+	strqD <= VC_strq when (VC_rnaSelS = "11") else '0';	
 	
 	-- data out mux
 	VC_qout <= 	dataOutA when (VC_rnaSelO = "00") else
@@ -200,10 +202,10 @@ begin
 					(others => '0');
 
 	-- strobe status out mux
-	VC_status <= 	statusA when (VC_rnaSelO = "00") else
-						statusB when (VC_rnaSelO = "01") else
-						statusC when (VC_rnaSelO = "10") else
-						statusD when (VC_rnaSelO = "11") else
+	VC_status <= 	statusA when (VC_rnaSelS = "00") else
+						statusB when (VC_rnaSelS = "01") else
+						statusC when (VC_rnaSelS = "10") else
+						statusD when (VC_rnaSelS = "11") else
 						(others => '0');
 	
 	-- aFull status out mux
