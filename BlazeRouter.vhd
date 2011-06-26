@@ -23,6 +23,7 @@
 -- Revision: 
 -- 					 Revision 0.01 - File Created
 --						 Revision 0.02 - Added additional modules (KVH)
+--						 Revision 0.03 - Revised entity and components (KM)
 -- Additional Comments: 
 --
 ----------------------------------------------------------------------------------
@@ -39,51 +40,52 @@ use work.router_library.all;
 
 entity BlazeRouter is
 	 
-    port ( north_data_in 		: inout std_logic_vector (WIDTH downto 0);
-			  north_data_out		: inout std_logic_vector (WIDTH downto 0);
-           north_neighbor_txr : in	std_logic;
-			  north_neighbor_rxr	: in  std_logic;
-			  north_local_txr		: out std_logic;
-			  north_local_rxr		: out std_logic;
+    port ( north_data_in 		: in std_logic_vector (WIDTH downto 0);	-- Datalink from neighbor (FCU)
+	 		  north_din_good		: in std_logic;									-- Data good indicator from neighbor to FCU (FCU)
+			  north_CTR_in			: in std_logic;									-- CTR indicator from neighbor to arbiter indicating ready to recieve (RNA)
+			  north_data_out		: out std_logic_vector (WIDTH downto 0);	-- Datalink to neighbor (SW)
+			  north_dout_good		: out std_logic;									-- Data good indicator to neighbor (SW)
+			  north_CTR_out		: out std_logic;									-- CTR indicator from FCU to neighbor for accpeting data (FCU)
+			  
+			  east_data_in 		: in std_logic_vector (WIDTH downto 0);
+	 		  east_din_good		: in std_logic;
+			  east_CTR_in			: in std_logic;
+			  east_data_out		: out std_logic_vector (WIDTH downto 0);
+			  east_dout_good		: out std_logic;
+			  east_CTR_out			: out std_logic; 									
+			  
+			  south_data_in 		: in std_logic_vector (WIDTH downto 0);
+	 		  south_din_good		: in std_logic;
+			  south_CTR_in			: in std_logic;
+			  south_data_out		: out std_logic_vector (WIDTH downto 0);
+			  south_dout_good		: out std_logic;
+			  south_CTR_out		: out std_logic;
+			  
+			  west_data_in 		: in std_logic_vector (WIDTH downto 0);
+	 		  west_din_good		: in std_logic;
+			  west_CTR_in			: in std_logic;
+			  west_data_out		: out std_logic_vector (WIDTH downto 0);
+			  west_dout_good		: out std_logic;
+			  west_CTR_out		 	: out std_logic;
+			  
+			  injection_data		: in  std_logic_vector (WIDTH downto 0); -- Datalink from PE
+			  injection_enq		: in  std_logic;								  -- Buffer enqueue from PE
+			  injection_status	: out std_logic_vector (1 downto 0);	  -- Buffer status to PE
+			  
+			  ejection_data		: out std_logic_vector (WIDTH downto 0); -- Datalink to PE
+			  ejection_deq			: in std_logic;								  -- Buffer dequeue from PE
+			  ejection_status		: out std_logic_vector (1 downto 0);	  -- Buffer status to PE
 			  
 			  
-			  east_data_in 		: inout std_logic_vector (WIDTH downto 0);
-			  east_data_out		: inout std_logic_vector (WIDTH downto 0);
-			  east_neighbor_txr 	: in	std_logic;
-			  east_neighbor_rxr	: in  std_logic;
-			  east_local_txr		: out std_logic;
-			  east_local_rxr		: out std_logic;
-			  
-           south_data_in 		: inout std_logic_vector (WIDTH downto 0);
-			  south_data_out 		: inout std_logic_vector (WIDTH downto 0);
-			  south_neighbor_txr : in	std_logic;
-			  south_neighbor_rxr	: in  std_logic;
-			  south_local_txr		: out std_logic;
-			  south_local_rxr		: out std_logic;
-			  
-           west_data_in 		: inout std_logic_vector (WIDTH downto 0);
-			  west_data_out		: inout std_logic_vector (WIDTH downto 0);
-			  west_neighbor_txr 	: in	std_logic;
-			  west_neighbor_rxr	: in  std_logic;
-			  west_local_txr		: out std_logic;
-			  west_local_rxr		: out std_logic;
-			  
-			  injection_data		: inout std_logic_vector (WIDTH downto 0);
-			  ejection_data		: inout std_logic_vector (WIDTH downto 0);
-			  processor_txr		: in  std_logic;
-			  processor_rxr		: in  std_logic;
-			  local_txr				: out std_logic;
-			  local_rxr				: out std_logic;
-			  in_buffer_in_en		: in  std_logic;
-			  ej_buffer_out_en	: in	std_logic;
-			  
-			  clk						: in std_logic);
+			  clk						: in std_logic; 	-- global clock
+			  reset					: in std_logic);	-- global reset
 end BlazeRouter;
 
 architecture rtl of BlazeRouter is
 	--Define Components here that will make up the design
 	--Refer to each .vhd module for definitions on ports
 
+	-- For injection and ejection buffers
 	component Fifo_mxn is 
 		 port ( 	FIFO_din			: in  	std_logic_vector (WIDTH downto 0);	-- FIFO input port (data port)
 					FIFO_enq			: in  	std_logic;									-- Enqueue item to FIFO buffer	(clocking pin)						
@@ -94,58 +96,101 @@ architecture rtl of BlazeRouter is
 					FIFO_status		: out 	std_logic_vector (1 downto 0);		-- FIFO status flags
 					FIFO_aStatus	: out		std_logic_vector (1 downto 0));		-- FIFO asynch status flags (for lc)							
 	end component;
-
-	entity virtual_channel is
-		 Port ( 	VC_din 		: in  	STD_LOGIC_VECTOR (WIDTH downto 0); 		-- Input data port (from FCU)
-					VC_enq 		: in  	STD_LOGIC;										-- Enqueue latch input (from FC) (dmuxed)
-					VC_deq 		: in  	STD_LOGIC;										-- Dequeue latch input (from RNA) (dmuxed)
-					VC_rnaSelI 	: in  	STD_LOGIC_VECTOR (1 downto 0);			-- FIFO select for input (from RNA) 
-					VC_rnaSelO 	: in  	STD_LOGIC_VECTOR (1 downto 0);			-- FIFO select for output (from RNA) 
-					VC_rnaSelS	: in		STD_LOGIC_VECTOR (1 downto 0);			-- FIFO select for status (from RNA)
-					VC_rst 		: in  	STD_LOGIC;										-- Master Reset (global)
-					VC_strq 		: in  	STD_LOGIC;										-- Status request (from RNA) (dmuxed)
-					VC_qout 		: out  	STD_LOGIC_VECTOR (WIDTH downto 0);		-- Output data port (to Switch) (muxed) 
-					VC_status 	: out  	STD_LOGIC_VECTOR (1 downto 0);			-- Latched status flags of pointed FIFO (muxed)
-					VC_aFull 	: out  	STD_LOGIC);										-- Asynch full flag of pointed FIFO  (muxed)
-	end virtual_channel;
-
-	-- Needed update
-	component Arbiter
-		port (n_data_in 			: in std_logic_vector (WIDTH downto 0);
-				e_data_in			: in std_logic_vector (WIDTH downto 0);
-				s_data_in			: in std_logic_vector (WIDTH downto 0);
-				w_data_in			: in std_logic_vector (WIDTH downto 0);
-				injection_data_in	: in std_logic_vector (WIDTH downto 0);		
-				
-				clk					: in std_logic;
-				
-				request_0			: in std_logic;
-				request_1			: in std_logic;
-				request_2			: in std_logic;
-				request_3			: in std_logic;
-				request_4			: in std_logic;
-				request_5			: in std_logic;
-				request_6			: in std_logic;
-				request_7			: in std_logic;
-				request_8			: in std_logic;
-				request_9			: in std_logic;
-				
-				buffer_en_0			: out std_logic;
-				buffer_en_1			: out std_logic;
-				buffer_en_2			: out std_logic;
-				buffer_en_3			: out std_logic;
-				buffer_en_4			: out std_logic;
-				buffer_en_5			: out std_logic;
-				buffer_en_6			: out std_logic;
-				buffer_en_7			: out std_logic;
-				buffer_en_8			: out std_logic;
-				buffer_en_9			: out std_logic;
-				
-				switch_en			: out std_logic;
-				
-				rna_result			: out std_logic_vector (WIDTH downto 0));
+	
+	-- For storage of data from network
+	component virtual_channel is
+		 Port ( 	Clk			: in 		STD_LOGIC;									-- Clock for data good generation
+					VC_din 		: in  	STD_LOGIC_VECTOR (WIDTH downto 0); 	-- Input data port (from FCU)
+					VC_enq 		: in  	STD_LOGIC;									-- Enqueue latch input (from FC) (dmuxed)
+					VC_deq 		: in  	STD_LOGIC;									-- Dequeue latch input (from RNA) (dmuxed)
+					VC_rnaSelI 	: in  	STD_LOGIC_VECTOR (1 downto 0);		-- FIFO select for input (from RNA) 
+					VC_rnaSelO 	: in  	STD_LOGIC_VECTOR (1 downto 0);		-- FIFO select for output (from RNA) 
+					VC_rnaSelS	: in		STD_LOGIC_VECTOR (1 downto 0);		-- FIFO select for status (from RNA)
+					VC_rst 		: in  	STD_LOGIC;									-- Master Reset (global)
+					VC_strq 		: in  	STD_LOGIC;									-- Status request (from RNA) (dmuxed)
+					VC_qout 		: out  	STD_LOGIC_VECTOR (WIDTH downto 0);	-- Output data port (to Switch) (muxed) 
+					VC_status 	: out  	STD_LOGIC_VECTOR (1 downto 0);		-- Latched status flags of pointed FIFO (muxed)
+					VC_aFull 	: out  	STD_LOGIC;									-- Asynch full flag of pointed FIFO  (muxed)
+					VC_dataG		: out		STD_LOGIC);									-- Data good indicator for slected output
 	end component;
 	
+	-- Router control unit
+	component Arbiter is
+		port (
+			--Internal
+			clk : in std_logic;
+			reset : in std_logic;
+			
+			-- VC related
+			n_vc_fStatSel : out std_logic_vector (1 downto 0);
+			n_vc_enqSel : out std_logic_vector (1 downto 0);
+			n_vc_statSel : out std_logic_vector (1 downto 0);
+			n_vc_status : in std_logic_vector (1 downto 0);
+			n_vc_statStrbSel : out std_logic_vector (1 downto 0);
+			n_vc_statStrb : out std_logic;
+			n_vc_dataOutSel : out std_logic_vector (1 downto 0);
+			n_vc_deqSel : out std_logic_vector (1 downto 0);
+			n_vc_deq : out std_logic;
+
+			e_vc_fStatSel : out std_logic_vector (1 downto 0);
+			e_vc_enqSel : out std_logic_vector (1 downto 0);
+			e_vc_statSel : out std_logic_vector (1 downto 0);
+			e_vc_status : in std_logic_vector (1 downto 0);
+			e_vc_statStrbSel : out std_logic_vector (1 downto 0);
+			e_vc_statStrb : out std_logic;
+			e_vc_dataOutSel : out std_logic_vector (1 downto 0);
+			e_vc_deqSel : out std_logic_vector (1 downto 0);
+			e_vc_deq : out std_logic;
+
+			s_vc_fStatSel : out std_logic_vector (1 downto 0);
+			s_vc_enqSel : out std_logic_vector (1 downto 0);
+			s_vc_statSel : out std_logic_vector (1 downto 0);
+			s_vc_status : in std_logic_vector (1 downto 0);
+			s_vc_statStrbSel : out std_logic_vector (1 downto 0);
+			s_vc_statStrb : out std_logic;
+			s_vc_dataOutSel : out std_logic_vector (1 downto 0);
+			s_vc_deqSel : out std_logic_vector (1 downto 0);
+			s_vc_deq : out std_logic;
+
+			w_vc_fStatSel : out std_logic_vector (1 downto 0);
+			w_vc_enqSel : out std_logic_vector (1 downto 0);
+			w_vc_statSel : out std_logic_vector (1 downto 0);
+			w_vc_status : in std_logic_vector (1 downto 0);
+			w_vc_statStrbSel : out std_logic_vector (1 downto 0);
+			w_vc_statStrb : out std_logic;
+			w_vc_dataOutSel : out std_logic_vector (1 downto 0);
+			w_vc_deqSel : out std_logic_vector (1 downto 0);
+			w_vc_deq : out std_logic;
+			
+			--FCU Related
+			n_CTRflg : out std_logic; -- Send a CTR to neighbor for packet
+			e_CTRflg : out std_logic;
+			s_CTRflg : out std_logic;
+			w_CTRflg : out std_logic;
+			n_CtrlFlg : in std_logic; --Receive a control packet flag from neighbor 
+			e_CtrlFlg : in std_logic; --(data good from neighbor via fcu)
+			s_CtrlFlg : in std_logic;
+			w_CtrlFlg : in std_logic;
+
+			--Scheduler Related (FCU)
+			n_rnaCtrl : in std_logic_vector(RSV_WIDTH-1 downto 0); -- Control Packet 
+			e_rnaCtrl : in std_logic_vector(RSV_WIDTH-1 downto 0);
+			s_rnaCtrl : in std_logic_vector(RSV_WIDTH-1 downto 0);
+			w_rnaCtrl : in std_logic_vector(RSV_WIDTH-1 downto 0);
+			
+			--Switch Related 
+			n_dSel : out std_logic_vector (2 downto 0); -- Select lines for data direction
+			e_dSel : out std_logic_vector (2 downto 0);
+			s_dSel : out std_logic_vector (2 downto 0);
+			w_dSel : out std_logic_vector (2 downto 0);
+			ejct_dSel : out std_logic_vector (2 downto 0);
+
+			rna_ctrlPkt : out std_logic_vector (RSV_WIDTH-1 downto 0); -- Control packet generator output
+			injt_ctrlPkt : in std_logic_vector (WIDTH downto 0)); -- Control packet from PE
+
+		end component;
+
+	-- Flow control for network neighbors
 	component fcu is
 				-- ports use the naming convention (neighbor_signalName. i.e. w_dataIn means the incomming data from the neighbor to the west)
 		port( n_CTRflg			: in		STD_LOGIC;									-- Clear To Recieve flag (from RNA)
@@ -189,46 +234,43 @@ architecture rtl of BlazeRouter is
 				w_vcEnq 			: out  	STD_LOGIC);									-- enqueue command from RNA (to VC)
 	end component;
 	
+	-- Switch unit for router
 	component SwitchUnit is
-		port ( 	sw_northIn 	: in std_logic_vector (WIDTH downto 0);		-- Incoming traffic from VC units
-					sw_eastIn 	: in std_logic_vector (WIDTH downto 0);
-					sw_southIn 	: in std_logic_vector (WIDTH downto 0);
-					sw_westIn	: in std_logic_vector (WIDTH downto 0);
-					sw_injct		: in std_logic_vector (WIDTH downto 0);		-- From Processor Logic Bus
-					sw_ctrlPkt	: in std_logic_vector (WIDTH downto 0);		-- From RNA (control packet)			
-					sw_ejctSel	: in std_logic_vector (2 downto 0);				-- selects for mux/dmux from rna
-					sw_northSel	: in std_logic_vector (2 downto 0);
-					sw_eastSel	: in std_logic_vector (2 downto 0);
-					sw_southSel	: in std_logic_vector (2 downto 0);
-					sw_westSel	: in std_logic_vector (2 downto 0);
-					
-					sw_rnaCtFl	: out std_logic;										-- control packet indicator flag
-					sw_northOut	: out std_logic_vector (WIDTH downto 0);		-- Outgoing traffic
-					sw_eastOut	: out std_logic_vector (WIDTH downto 0);	
-					sw_southOut	: out std_logic_vector (WIDTH downto 0);
-					sw_westOut 	: out std_logic_vector (WIDTH downto 0);
-					sw_rnaCtrl  : out std_logic_vector (WIDTH downto 0);		-- Control packet to RNA
-					sw_ejct		: out std_logic_vector (WIDTH downto 0));		-- To Processor Logic Bus
+		port (Clk			: in std_logic;										-- Clock for data good
+				sw_northIn 	: in std_logic_vector (WIDTH downto 0);		-- Incoming traffic from VC units
+				sw_eastIn 	: in std_logic_vector (WIDTH downto 0);
+				sw_southIn 	: in std_logic_vector (WIDTH downto 0);
+				sw_westIn	: in std_logic_vector (WIDTH downto 0);
+				sw_injct		: in std_logic_vector (WIDTH downto 0);		-- From PE
+				sw_ctrlPkt	: in std_logic_vector (WIDTH downto 0);		-- From RNA (control packet)			
+				sw_ejctSel	: in std_logic_vector (2 downto 0);				-- selects for mux/dmux from rna
+				sw_northSel	: in std_logic_vector (2 downto 0);
+				sw_eastSel	: in std_logic_vector (2 downto 0);
+				sw_southSel	: in std_logic_vector (2 downto 0);
+				sw_westSel	: in std_logic_vector (2 downto 0);
+				
+				sw_dGNorth  : in std_logic;										-- Data good signals from VC
+				sw_dGEast	: in std_logic;
+				sw_dGSouth	: in std_logic;
+				sw_dGWest	: in std_logic;
+				sw_rst		: in std_logic;										-- Switch reset for data good
+				sw_injctSt	: in std_logic_vector (1 downto 0);
+				
+				sw_rnaCtFl	: out std_logic;										-- control packet indicator flag
+				sw_northOut	: out std_logic_vector (WIDTH downto 0);		-- Outgoing traffic
+				sw_eastOut	: out std_logic_vector (WIDTH downto 0);	
+				sw_southOut	: out std_logic_vector (WIDTH downto 0);
+				sw_westOut 	: out std_logic_vector (WIDTH downto 0);
+				sw_rnaCtrl  : out std_logic_vector (WIDTH downto 0);		-- Control packet to RNA
+				sw_ejct		: out std_logic_vector (WIDTH downto 0);		-- To PE
+				sw_dGNorthO : out std_logic;										-- Data good signal to neighbors
+				sw_dGEastO	: out std_logic;
+				sw_dGSouthO	: out std_logic;
+				sw_dGWestO	: out std_logic);										-- This might be needed in a arbiter update (might automate by looking at packet)
+				
 	end component;
 	
-	--Define signals here that will be used to connect the components (old signals)
---	signal	n_data_in, n_data_out, n_data_out_to_sw, n_data_in_from_sw, e_data_in, e_data_out, e_data_out_to_sw,
---				e_data_in_from_sw, s_data_in, s_data_out, s_data_out_to_sw, s_data_in_from_sw, 
---				w_data_in, w_data_out, w_data_out_to_sw, w_data_in_from_sw, nB1_status, nB5_status, 
---				eB2_status, eB6_status, sB3_status, sB7_status, wB4_status, wB8_status, inB9_status,
---				ejB10_status, injection_data_to_sw, ejection_data_from_sw, rna_results: bit8;
---	
---	signal 	nB1_buffer_in_en, nB5_buffer_in_en, eB2_buffer_in_en, eB6_buffer_in_en, 
---				sB3_buffer_in_en, sB7_buffer_in_en, wB4_buffer_in_en, wB8_buffer_in_en,
---				ejB10_buffer_in_en,
---				nB1_buffer_out_en, nB5_buffer_out_en, eB2_buffer_out_en, eB6_buffer_out_en,
---				sB3_buffer_out_en, sB7_buffer_out_en, wB4_buffer_out_en, wB8_buffer_out_en,
---				inB9_buffer_out_en,
---				nB1_request_status, nB5_request_status, eB2_request_status, eB6_request_status, 
---				sB3_request_status, sB7_request_status, wB4_request_status, wB8_request_status,
---				inB9_request_status, ejB10_request_status,
---				sw_enable : std_logic;
-	
+	-- Signal Definitions
 	-- signals between VC and RNA (need to route) (rna needs signals routed to it)
 	signal rnaVcNorthDq		: std_logic;							-- Dequeue signal from RNA to VC
 	signal rnaVcEastDq		: std_logic;
@@ -289,7 +331,11 @@ architecture rtl of BlazeRouter is
 	signal vcSwNorth 		: std_logic_vector(WIDTH downto 0); -- Data output from VC to Switch
 	signal vcSwEast  		: std_logic_vector(WIDTH downto 0); 	
 	signal vcSwSouth 		: std_logic_vector(WIDTH downto 0); 
-	signal vcSwWest  		: std_logic_vector(WIDTH downto 0); 	
+	signal vcSwWest  		: std_logic_vector(WIDTH downto 0); 
+	signal vcSwDGNorth	: std_logic;
+	signal vcSwDGEast		: std_logic;
+	signal vcSwDGSouth	: std_logic;
+	signal vcSwDGWest		: std_logic;
 	
 	-- signals between switch and RNA (routed) (rna needs signals routed to it)
 	signal swRnaCtrlFlg	: std_logic; -- Control flag indicator from Switch to RNA
@@ -297,194 +343,255 @@ architecture rtl of BlazeRouter is
 	signal rnaSwEastSel 	: std_logic_vector (2 downto 0);
 	signal rnaSwSouthSel : std_logic_vector (2 downto 0);
 	signal rnaSwWestSel 	: std_logic_vector (2 downto 0);
-	signal rnaSwEjectSel : std_logic_vector (1 downto 0);
+	signal rnaSwEjectSel : std_logic_vector (2 downto 0);
 	signal rnaSwCtrlPktO	: std_logic_vector (WIDTH downto 0); -- Control packet from RNA to Switch (to outside)
 	signal swRnaCtrlPktI	: std_logic_vector (WIDTH downto 0); -- Control packet from Switch to RNA (from PE)
 	
 	-- signals between switch and PE FIFOs (routed)
 	signal fifoSwInjct	: std_logic_vector (WIDTH downto 0); -- Packet data from injection FIFO to Switch
-	signal swFifoEject	: std_logic_vector (WIDTH downto 0); -- Packet data from Switch to FIFO to ejection
+	signal swFifoEject	: std_logic_vector (WIDTH downto 0); -- Packet data from Switch to ejection FIFO 
 	
 	-- signals between PE FIFOs and RNA
-	
+	signal rnaeFifoEnq		: std_logic; 							-- for ejection fifo
+	signal rnaiFifoDeq		: std_logic; 							-- for injection fifo
+	signal rnaiFifoStrq		: std_logic; 							-- statust request for fifos
+	signal rnaeFifoStrq		: std_logic;
+	signal iFifoRnaStat		: std_logic_vector (1 downto 0);	-- Status signals for fifos
+	signal eFifoRnaStat		: std_logic_vector (1 downto 0); 
+	signal iFifoaStat			: std_logic_vector (1 downto 0);
 	
 begin
 	--Instantiate components here to create the overall functionality
 	
-	--Flow Control Unit
-	-- *** denotes entity port (routed)
-	-- ** denotes need route (inputs are entity based, output are signal based)
-	flowCtrl: fcu port map(	n_CTRflg,		-- Clear To Recieve flag (from RNA) ** (All directions need it)
-									north_data_in, -- Input data port (from neighbor) ***
-									n_dStrb,			-- Data strobe (from neighbor) **
-									n_vcFull,		-- Full status flag (from VC) **
-									n_vcData,		-- Data port (to VC) **
-									n_rnaCtrl,		-- Data port (to RNA) **
-									n_rnaCtrlStrb,	-- Control packet strobe (to RNA) **
-									n_CTR,			-- Clear to Recieve (to neighbor) **
-									n_vcEnq,			-- enqueue command from RNA (to VC)**
+	-- Arbiter Unit
+	ar: Arbiter port map (	clk,  -- *** -- Internal
+									reset, -- ***
+									
+									n_vc_fStatSel, -- not needed controled by I
+									rnaVcNorthSelI,
+									n_vc_statSel, -- not needed  controlled by S
+									vcRnaNorthStat,
+									rnaVcNorthSelS,
+									rnaVcNorthStrq,
+									rnaVcNorthSelO,
+									n_vc_deqSel, -- not needed controled by O
+									rnaVcNorthDq,
+
+									e_vc_fStatSel, -- not needed controled by I
+									rnaVcEastSelI,
+									e_vc_statSel, -- not needed  controlled by S
+									vcRnaEastStat,
+									rnaVcEastSelS,
+									rnaVcEastStrq,
+									rnaVcEastSelO,
+									e_vc_deqSel, -- not needed controled by O
+									rnaVcEastDq,
+
+									s_vc_fStatSel, -- not needed controled by I
+									rnaVcSouthSelI,
+									s_vc_statSel, -- not needed  controlled by S
+									vcRnaSouthStat,
+									rnaVcSouthSelS,
+									rnaVcSouthStrq,
+									rnaVcSouthSelO,
+									s_vc_deqSel, -- not needed controled by O
+									rnaVcSouthDq,
+
+									w_vc_fStatSel, -- not needed controled by I
+									rnaVcWestSelI,
+									w_vc_statSel, -- not needed  controlled by S
+									vcRnaWestStat,
+									rnaVcWestSelS,
+									rnaVcWestStrq,
+									rnaVcWestSelO,
+									w_vc_deqSel, -- not needed controled by O
+									rnaVcWestDq,
+									
+									--FCU Related
+									rnaFcNorthCtrFlg, -- Send a CTR to neighbor for packet
+									rnaFcEastCtrFlg,
+									rnaFcSouthCtrFlg,
+									rnaFcWestCtrFlg,
+									fcRnaNorthCStrb, --Receive a control packet flag from neighbor 
+									fcRnaEastCStrb, --(data good from neighbor via fcu)
+									fcRnaSouthCStrb,
+									fcRnaWestCStrb,
+
+									--Scheduler Related
+									fcRnaNorthCtPkt, -- Control Packet 
+									fcRnaEastCtPkt,
+									fcRnaSouthCtPkt,
+									fcRnaWestCtPkt,
+									
+									--Switch Related
+									rnaSwNorthSel, -- Select lines for data direction
+									rnaSwEastSel,
+									rnaSwSouthSel,
+									rnaSwWestSel,
+									rnaSwEjectSel,
+									
+									rnaSwCtrlPktO, -- Control packet generator output
+									swRnaCtrlPktI); -- Control packet from PE
+									
+	
+	--Flow Control Unit (Routed except for TLM ports)
+	-- *** denotes a connection to the TLM entity port.
+	flowCtrl: fcu port map(	rnaFcNorthCtrFlg,	-- Clear To Recieve flag (from RNA)  (All directions need it)
+									north_data_in, 	-- Input data port (from neighbor) ***
+									north_din_good,	-- Data strobe (from neighbor) ***
+									vcFcNorthFull,		-- Full status flag (from VC) 
+									fcVcNorth,			-- Data port (to VC) 
+									fcRnaNorthCtPkt,	-- Data port (to RNA) 
+									fcRnaNorthCStrb,	-- Control packet strobe (to RNA) 
+									north_CTR_out,		-- Clear to Recieve (to neighbor) ***
+									fcVcNorthEnq,		-- enqueue command from RNA (to VC)
 				
-									e_CTRflg,		-- Clear To Recieve flag (from RNA)
-									east_data_in, 	-- Input data port (from neighbor)
-									e_dStrb,			-- Data strobe (from neighbor) 
-									e_vcFull,		-- Full status flag (from VC)
-									e_vcData,		-- Data port (to VC)
-									e_rnaCtrl,		-- Data port (to RNA)
-									e_rnaCtrlStrb,	-- Control packet strobe (to RNA)
-									e_CTR,			-- Clear to Recieve (to neighbor) 
-									e_vcEnq,			-- enqueue command from RNA (to VC)
+									rnaFcEastCtrFlg,	-- Clear To Recieve flag (from RNA)
+									east_data_in, 		-- Input data port (from neighbor) ***
+									east_din_good,		-- Data strobe (from neighbor) ***
+									vcFcEastFull,		-- Full status flag (from VC)
+									fcVcEast,			-- Data port (to VC)
+									fcRnaEastCtPkt,	-- Data port (to RNA)
+									fcRnaEastCStrb,	-- Control packet strobe (to RNA)
+									east_CTR_out,		-- Clear to Recieve (to neighbor) ***
+									fcVcEastEnq,		-- enqueue command from RNA (to VC)
 				
-									s_CTRflg,		-- Clear To Recieve flag (from RNA)
-									south_data_in, -- Input data port (from neighbor)
-									s_dStrb,			-- Data strobe (from neighbor) 
-									s_vcFull,		-- Full status flag (from VC)
-									s_vcData,		-- Data port (to VC)
-									s_rnaCtrl,		-- Data port (to RNA)
-									s_rnaCtrlStrb,	-- Control packet strobe (to RNA)
-									s_CTR,			-- Clear to Recieve (to neighbor)
-									s_vcEnq,			-- enqueue command from RNA (to VC)
+									rnaFcSouthCtrFlg,	-- Clear To Recieve flag (from RNA)
+									south_data_in, 	-- Input data port (from neighbor) ***
+									south_din_good,	-- Data strobe (from neighbor) ***
+									vcFcSouthFull,		-- Full status flag (from VC)
+									fcVcSouth,			-- Data port (to VC)
+									fcRnaSouthCtPkt,	-- Data port (to RNA)
+									fcRnaSouthCStrb,	-- Control packet strobe (to RNA)
+									south_CTR_out,		-- Clear to Recieve (to neighbor) ***
+									fcVcSouthEnq,		-- enqueue command from RNA (to VC)
 				
-									w_CTRflg,		-- Clear To Recieve flag (from RNA)
-									west_data_in, 	-- Input data port (from neighbor) 
-									w_dStrb,			-- Data strobe (from neighbor) 
-									w_vcFull,		-- Full status flag (from VC)
-									w_vcData,		-- Data port (to VC)
-									w_rnaCtrl,		-- Data port (to RNA)
-									w_rnaCtrlStrb,	-- Control packet strobe (to RNA)
-									w_CTR,			-- Clear to Recieve (to neighbor) 
-									w_vcEnq);		-- enqueue command from RNA (to VC)
+									rnaFcWestCtrFlg,	-- Clear To Recieve flag (from RNA)
+									west_data_in, 		-- Input data port (from neighbor) ***
+									west_din_good,		-- Data strobe (from neighbor) ***
+									vcFcWestFull,		-- Full status flag (from VC)
+									fcVcWest,			-- Data port (to VC)
+									fcRnaWestCtPkt,	-- Data port (to RNA)
+									fcRnaWestCStrb,	-- Control packet strobe (to RNA)
+									west_CTR_out,		-- Clear to Recieve (to neighbor) ***
+									fcVcWestEnq);		-- enqueue command from RNA (to VC)
 	
 	
 	--Virtual Channels 
 	-- ** needs route to signal
-	vcNorth: virtual_channel port map( 	VC_din, 			-- Input data port (from FC) ** (All directions need)
-													VC_enq,			-- Enqueue latch input (from FC) (dmuxed)**
-													VC_deq,			-- Dequeue latch input (from RNA) (dmuxed)**
-													VC_rnaSelI,		-- FIFO select for input (from RNA) **
-													VC_rnaSelO,		-- FIFO select for output (from RNA)**
-													VC_rnaSelS,		-- FIFO select for status (from RNA)**
-													VC_rst,			-- Master Reset (global) ** (top level needs signal)
-													VC_strq,			-- Status request (from RNA) (dmuxed) **
-													vcSwNorth, 		-- Output data port (to Switch) (muxed) 
-													VC_status,		-- Latched status flags of pointed FIFO (to RNA) (muxed) **
-													VC_aFull);		-- Asynch full flag of pointed FIFO (to FC) (muxed) **
+	vcNorth: virtual_channel port map( 	clk,					-- Clock pin ***
+													fcVcNorth, 			-- Input data port (from FC)
+													fcVcNorthEnq,		-- Enqueue latch input (from FC) dmuxed
+													rnaVcNorthDq,		-- Dequeue latch input (from RNA) dmuxed
+													rnaVcNorthSelI,	-- FIFO select for input (from RNA)
+													rnaVcNorthSelO,	-- FIFO select for output (from RNA)
+													rnaVcNorthSelS,	-- FIFO select for status (from RNA)
+													reset,				-- Master Reset (global) *** 
+													rnaVcNorthStrq,	-- Status request (from RNA) (dmuxed) 
+													vcSwNorth, 			-- Output data port (to Switch) (muxed) 
+													vcRnaNorthStat,	-- Latched status flags of pointed FIFO (to RNA) (muxed)
+													vcFcNorthFull,		-- Asynch full flag of pointed FIFO (to FC) (muxed)
+													vcSwDGNorth);		-- Data good signal (to switch)
 
-	vcEast: virtual_channel port map( 	VC_din, 			-- Input data port (from FC)
-													VC_enq,			-- Enqueue latch input (from FC) (dmuxed)
-													VC_deq,			-- Dequeue latch input (from RNA) (dmuxed)
-													VC_rnaSelI,		-- FIFO select for input (from RNA) 
-													VC_rnaSelO,		-- FIFO select for output (from RNA)
-													VC_rnaSelS,		-- FIFO select for status (from RNA)
-													VC_rst,			-- Master Reset (global)
-													VC_strq,			-- Status request (from RNA) (dmuxed)
-													vcSwEast, 		-- Output data port (to Switch) (muxed) 
-													VC_status,		-- Latched status flags of pointed FIFO (muxed)
-													VC_aFull);		-- Asynch full flag of pointed FIFO  (muxed)
+	vcEast: virtual_channel port map( 	clk,					-- Clock pin ***
+													fcVcEast, 			-- Input data port (from FC)
+													fcVcEastEnq,		-- Enqueue latch input (from FC) (dmuxed)
+													rnaVcEastDq,		-- Dequeue latch input (from RNA) (dmuxed)
+													rnaVcEastSelI,		-- FIFO select for input (from RNA) 
+													rnaVcEastSelO,		-- FIFO select for output (from RNA)
+													rnaVcEastSelS,		-- FIFO select for status (from RNA)
+													reset,				-- Master Reset (global) ***
+													rnaVcEastStrq,		-- Status request (from RNA) (dmuxed)
+													vcSwEast, 			-- Output data port (to Switch) (muxed) 
+													vcRnaEastStat,		-- Latched status flags of pointed FIFO (muxed)
+													vcFcEastFull,		-- Asynch full flag of pointed FIFO  (muxed)
+													vcSwDGEast);		-- Data good signal (to switch)
 
-	vcSouth: virtual_channel port map( 	VC_din, 			-- Input data port (from FC)
-													VC_enq,			-- Enqueue latch input (from FC) (dmuxed)
-													VC_deq,			-- Dequeue latch input (from RNA) (dmuxed)
-													VC_rnaSelI,		-- FIFO select for input (from RNA) 
-													VC_rnaSelO,		-- FIFO select for output (from RNA)
-													VC_rnaSelS,		-- FIFO select for status (from RNA)
-													VC_rst,			-- Master Reset (global)
-													VC_strq,			-- Status request (from RNA) (dmuxed)
-													vcSwSouth, 		-- Output data port (to Switch) (muxed) 
-													VC_status,		-- Latched status flags of pointed FIFO (muxed)
-													VC_aFull);		-- Asynch full flag of pointed FIFO  (muxed)
+	vcSouth: virtual_channel port map( 	clk,					-- Clock pin ***
+													fcVcSouth, 			-- Input data port (from FC)
+													fcVcSouthEnq,		-- Enqueue latch input (from FC) (dmuxed)
+													rnaVcSouthDq,		-- Dequeue latch input (from RNA) (dmuxed)
+													rnaVcSouthSelI,	-- FIFO select for input (from RNA) 
+													rnaVcSouthSelO,	-- FIFO select for output (from RNA)
+													rnaVcSouthSelS,	-- FIFO select for status (from RNA)
+													reset,				-- Master Reset (global) ***
+													rnaVcSouthStrq,	-- Status request (from RNA) (dmuxed)
+													vcSwSouth, 			-- Output data port (to Switch) (muxed) 
+													vcRnaSouthStat,	-- Latched status flags of pointed FIFO (muxed)
+													vcFcSouthFull,		-- Asynch full flag of pointed FIFO  (muxed)
+													vcSwDGSouth);		-- Data good signal (to switch)
 
-	vcWest: virtual_channel port map( 	VC_din, 			-- Input data port (from FC)
-													VC_enq,			-- Enqueue latch input (from FC) (dmuxed)
-													VC_deq,			-- Dequeue latch input (from RNA) (dmuxed)
-													VC_rnaSelI,		-- FIFO select for input (from RNA) 
-													VC_rnaSelO,		-- FIFO select for output (from RNA)
-													VC_rnaSelS,		-- FIFO select for status (from RNA)
-													VC_rst,			-- Master Reset (global)
-													VC_strq,			-- Status request (from RNA) (dmuxed)
-													vcSwWest, 		-- Output data port (to Switch) (muxed) 
-													VC_status,		-- Latched status flags of pointed FIFO (muxed)
-													VC_aFull);		-- Asynch full flag of pointed FIFO  (muxed)
+	vcWest: virtual_channel port map( 	clk,					-- Clock pin ***
+													fcVcWest, 			-- Input data port (from FC)
+													fcVcWestEnq,		-- Enqueue latch input (from FC) (dmuxed)
+													rnaVcWestDq,		-- Dequeue latch input (from RNA) (dmuxed)
+													rnaVcWestSelI,		-- FIFO select for input (from RNA) 
+													rnaVcWestSelO,		-- FIFO select for output (from RNA)
+													rnaVcWestSelS,		-- FIFO select for status (from RNA)
+													reset,				-- Master Reset (global) ***
+													rnaVcWestStrq,		-- Status request (from RNA) (dmuxed)
+													vcSwWest, 			-- Output data port (to Switch) (muxed) 
+													vcRnaWestStat,		-- Latched status flags of pointed FIFO (muxed)
+													vcFcWestFull,		-- Asynch full flag of pointed FIFO  (muxed)
+													vcSwDGWest);		-- Data good signal (to switch)
 										
 
 	-- Injection and Ejection buffers
 	-- ** needs route
-	injection: Fifo_mxn port map(	FIFO_din,		-- FIFO input port (from PE) ** (Both directions)
-											FIFO_enq,		-- Enqueue item to FIFO buffer	(clocking pin)	**					
-											FIFO_deq,		-- Dequeue item from FIFO buffer (clocking pin) **
-											FIFO_rst,		-- Asynch reset **
-											FIFO_strq,		-- Status request int **
-											fifoSwInjct,	-- FIFO output port (to switch) **						
-											FIFO_status,	-- FIFO status flags **
-											FIFO_aStatus);	-- FIFO asynch status flags ** 							
+	injection: Fifo_mxn port map(	injection_data,	-- FIFO input port (from PE) *** (Both directions)
+											injection_enq,		-- Enqueue item to FIFO buffer ***	 (from PE) (clocking pin)					
+											rnaiFifoDeq,		-- Dequeue item from FIFO buffer  (from RNA) (clocking pin) 
+											reset,				-- Asynch reset ***
+											rnaiFifoStrq,		-- Status request int (from RNA)
+											fifoSwInjct,		-- FIFO output port (to switch) 						
+											iFifoRnaStat,		-- FIFO status flags (to RNA)
+											iFifoaStat);		-- FIFO asynch status flags (to PE and switch)	***						
 	
-	ejection: Fifo_mxn port map(	swFifoEject,	-- FIFO input port (from switch)
-											FIFO_enq,		-- Enqueue item to FIFO buffer	(clocking pin)						
-											FIFO_deq,		-- Dequeue item from FIFO buffer (clocking pin)
-											FIFO_rst,		-- Asynch reset
-											FIFO_strq,		-- Status request int
-											FIFO_qout,		-- FIFO output port (to PE)						
-											FIFO_status,	-- FIFO status flags
-											FIFO_aStatus);	-- FIFO asynch status flags 	
+	ejection: Fifo_mxn port map(	swFifoEject,		-- FIFO input port (from switch)
+											rnaeFifoEnq,		-- Enqueue item to FIFO buffer	(clocking pin)						
+											ejection_deq,		-- Dequeue item from FIFO buffer (clocking pin) ***
+											reset,				-- Asynch reset ***
+											rnaeFifoStrq,		-- Status request int
+											ejection_data,		-- FIFO output port (to PE) ***						
+											eFifoRnaStat,		-- FIFO status flags
+											ejection_status);	-- FIFO asynch status flags ***	
 
 
 	-- Switch unit (signals routed)
-	sw: SwitchUnit port map (	vcSwNorth,			-- Incoming traffic from VC units
+	sw: SwitchUnit port map (	clk,					-- Clock pin ***
+										vcSwNorth,			-- Incoming traffic from VC units
 										vcSwEast,
 										vcSwSouth,
 										vcSwWest,
-										fifoSwInjct,		-- From Processor Logic Bus
-										rnaSwCtrlPktI,		-- From RNA (control packet to network)			
+										fifoSwInjct,		-- From PE
+										rnaSwCtrlPktO,		-- From RNA (control packet to network)			
 										rnaSwEjectSel,		-- selects for mux/dmux from rna
 										rnaSwNorthSel,
 										rnaSwEastSel,
 										rnaSwSouthSel,
 										rnaSwWestSel,
 										
+										vcSwDGNorth,		-- Data good signals from VC
+										vcSwDGEast,
+										vcSwDGSouth,
+										vcSwDGWest,
+										reset,				-- Switch reset for data good ***
+										iFifoaStat,			
+										
 										swRnaCtrlFlg,		-- control packet indicator flag
-										north_data_out,	-- Outgoing traffic
+										north_data_out,	-- Outgoing traffic ***
 										east_data_out,	
 										south_data_out,
 										west_data_out,
-										swRnaCtrlPktO,		-- Control packet from PE to RNA
-										fifoSwEject);		-- To Processor Logic Bus
-
-
-	--Arbiter
-	ar: Arbiter port map(n_data_out_to_sw,
-								e_data_out_to_sw,
-								s_data_out_to_sw,
-								w_data_out_to_sw,
-								injection_data,
-								nB1_status,
-								eB2_status,
-								sB3_status,
-								wB4_status,
-								nB5_status,
-								eB6_status,
-								sB7_status,
-								wB8_status,
-								inB9_status,
-								ejB10_status,
-								nB1_request_status,
-								eB2_request_status,
-								sB3_request_status,
-								wB4_request_status,
-								nB5_request_status,
-								eB6_request_status,
-								sB7_request_status,
-								wB8_request_status,
-								inB9_request_status,
-								ejB10_request_status,
-								nB1_buffer_out_en,
-								eB2_buffer_out_en,
-								sB3_buffer_out_en,
-								wB4_buffer_out_en,
-								nB5_buffer_in_en,
-								eB6_buffer_in_en,
-								sB7_buffer_in_en,
-								wB8_buffer_in_en,
-								inB9_buffer_out_en,
-								ejB10_buffer_in_en);
-												 
+										swRnaCtrlPktI,		-- Control packet from PE to RNA
+										swFifoEject,		-- To PE
+										north_dout_good,	-- Data good signal to neighbors ***
+										east_dout_good,
+										south_dout_good,
+										west_dout_good);	
+	
+-- asynch outputs
+injection_status <= 	iFifoaStat;
+	
 end rtl;
 

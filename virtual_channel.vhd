@@ -16,6 +16,8 @@
 --                 Revision 0.03 - Created implmentation code (KM)
 --						 Revision 0.04 - Changed some functionality to better communicate with FC (KM)
 --						 Revision 0.05 - Made strobed status select indpendent from output select (KM)
+--						 Revision 0.06 - Added an automated data good generator for output (KM)
+--						 Revision 0.07 - Added data good generator (KM)
 -- Additional Comments: 
 --
 ----------------------------------------------------------------------------------
@@ -36,7 +38,8 @@ use work.router_library.all;
 --use UNISIM.VComponents.all;
 
 entity virtual_channel is
-    Port ( 	VC_din 		: in  	STD_LOGIC_VECTOR (WIDTH downto 0); 	-- Input data port (from FCU)
+    Port ( 	Clk			: in 		STD_LOGIC;									-- Clock for data good generation
+				VC_din 		: in  	STD_LOGIC_VECTOR (WIDTH downto 0); 	-- Input data port (from FCU)
 	 			VC_enq 		: in  	STD_LOGIC;									-- Enqueue latch input (from FC) (dmuxed)
 				VC_deq 		: in  	STD_LOGIC;									-- Dequeue latch input (from RNA) (dmuxed)
 				VC_rnaSelI 	: in  	STD_LOGIC_VECTOR (1 downto 0);		-- FIFO select for input (from RNA) 
@@ -46,7 +49,8 @@ entity virtual_channel is
 				VC_strq 		: in  	STD_LOGIC;									-- Status request (from RNA) (dmuxed)
 				VC_qout 		: out  	STD_LOGIC_VECTOR (WIDTH downto 0);	-- Output data port (to Switch) (muxed) 
 				VC_status 	: out  	STD_LOGIC_VECTOR (1 downto 0);		-- Latched status flags of pointed FIFO (muxed)
-				VC_aFull 	: out  	STD_LOGIC);									-- Asynch full flag of pointed FIFO  (muxed)
+				VC_aFull 	: out  	STD_LOGIC;									-- Asynch full flag of pointed FIFO  (muxed)
+				VC_dataG		: out		STD_LOGIC);									-- Data good indicator for slected output
 end virtual_channel;
 
 architecture vc_4 of virtual_channel is
@@ -57,7 +61,7 @@ architecture vc_4 of virtual_channel is
 	-- select bits from a side will be use for all ops pertaining to that side
 	-- (i.e fcSel = 10 will select fifo3 enq, astatus and din will point to this fifo for the FC)  
 
-	-- FIFO definition (note: it can hold an extra flit) *BONUS!*
+	-- FIFO definition (note: it can hold an extra flit for reasons unknown) 
 	component Fifo_mxn
 		
 		port ( 	FIFO_din			: in  	std_logic_vector (WIDTH downto 0);	-- FIFO input port (data port)
@@ -73,6 +77,14 @@ architecture vc_4 of virtual_channel is
 
 
 	-- signals definitions
+	
+	-- Data good generator signals
+	signal dataGA		: std_logic;
+	signal dataGB		: std_logic;
+	signal dataGC		: std_logic;
+	signal dataGD		: std_logic;
+	signal dataGInd	: std_logic;
+	signal rnaSelO		: std_logic_vector (1 downto 0);
 	
 	-- Data input demultiplexer signals (uses VC_fcSel)
 	signal 	dataInA	: std_logic_vector (WIDTH downto 0);
@@ -162,6 +174,52 @@ begin
 										 dataOutD,
 										  statusD,
 										 aStatusD);										 
+
+
+	-- Data good generation component
+	-- general case (data from VC to switch to neighbor):
+
+	-- VC generates a data good for all of its buffers if data exists.
+	-- VC picks one of the signals (mux) depending on the output select.
+	-- If the output select changes the main data good signal going out goes low for one clock cycle then back to the signals real state.
+	-- If the output selected buffer goes empty the good signal goes low.
+
+	-- The switch takes the data good signal from the VC and sends it through the switch along with the data.
+	-- If the switch output select changes the data good signal going out goes low for one clock cycle and then back to the signals real state.
+	-- The data good signal from the switch goes to the neighboring router.
+
+	-- If a dequeue is being performed then the data good will do low momentarailty.
+
+	-- data good generators
+	dataGA <= '1' when (aStatusA = "00" or aStatusA = "10") else '0';
+	dataGB <= '1' when (aStatusB = "00" or aStatusB = "10") else '0';
+	dataGC <= '1' when (aStatusC = "00" or aStatusC = "10") else '0';
+	dataGD <= '1' when (aStatusD = "00" or aStatusD = "10") else '0';
+
+	-- data good output control
+	process (Clk, VC_deq)
+	begin
+	
+		if(rising_edge(CLK)) then
+			if (VC_rst = '1') then
+				rnaSelO <= "00";
+				dataGInd <= '0';	
+			elsif (rnaSelO /= VC_rnaSelO and VC_rst = '0') then
+				dataGInd <= '0';
+				rnaSelO <= VC_rnaSelO;
+			elsif(rnaSelO = VC_rnaSelO and VC_rst = '0') then
+					dataGInd <= '1';
+			end if;
+		end if;
+	
+	end process;
+
+	-- data good out mux
+	VC_dataG <= dataGA when (VC_rnaSelO = "00" and dataGInd = '1' and VC_deq = '0') else
+					dataGB when (VC_rnaSelO = "01" and dataGInd = '1' and VC_deq = '0') else
+					dataGC when (VC_rnaSelO = "10" and dataGInd = '1' and VC_deq = '0') else
+					dataGD when (VC_rnaSelO = "11" and dataGInd = '1' and VC_deq = '0') else
+					'0';
 
 	-- Demux/Mux Land
 	

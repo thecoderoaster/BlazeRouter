@@ -15,6 +15,8 @@ package router_library is
 	constant SIZE		: integer := 10;
 	constant LUT_SIZE : integer := 7;			--Start with 8 bits (move up eventually) (KVH)
 	
+	constant RSV_WIDTH: integer := 40; -- RSV Packets are 40 bits wide.
+	
 	--Buffer Status Codes Go Here
 	constant FULL_FIFO				: std_logic_vector (1 downto 0) := "10";		-- CODE: 0x02 = FIFO full
 	constant EMPTY_FIFO				: std_logic_vector (1 downto 0) := "01";	 	-- CODE: 0x01 = FIFO empty
