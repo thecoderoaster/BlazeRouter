@@ -40,12 +40,12 @@ use work.router_library.all;
 
 entity BlazeRouter is
 	 
-    port ( north_data_in 		: in std_logic_vector (WIDTH downto 0);	-- Datalink from neighbor (FCU)
-	 		  north_din_good		: in std_logic;									-- Data good indicator from neighbor to FCU (FCU)
-			  north_CTR_in			: in std_logic;									-- CTR indicator from neighbor to arbiter indicating ready to recieve (RNA)
-			  north_data_out		: out std_logic_vector (WIDTH downto 0);	-- Datalink to neighbor (SW)
-			  north_dout_good		: out std_logic;									-- Data good indicator to neighbor (SW)
-			  north_CTR_out		: out std_logic;									-- CTR indicator from FCU to neighbor for accpeting data (FCU)
+    port ( north_data_in 		: in std_logic_vector (WIDTH downto 0);	-- Datalink from neighbor (to FCU)
+	 		  north_din_good		: in std_logic;									-- Data good indicator from neighbor (to FCU)
+			  north_CTR_in			: in std_logic;									-- CTR indicator from neighbor to arbiter indicating ready to recieve (to RNA) *** need implment in rna
+			  north_data_out		: out std_logic_vector (WIDTH downto 0);	-- Datalink to neighbor (from SW)
+			  north_dout_good		: out std_logic;									-- Data good indicator to neighbor (from SW)
+			  north_CTR_out		: out std_logic;									-- CTR indicator from FCU to neighbor for accpeting data (from FCU)
 			  
 			  east_data_in 		: in std_logic_vector (WIDTH downto 0);
 	 		  east_din_good		: in std_logic;
@@ -68,6 +68,7 @@ entity BlazeRouter is
 			  west_dout_good		: out std_logic;
 			  west_CTR_out		 	: out std_logic;
 			  
+			  -- arb needs to support ejection and injection fifos but no required for simulation if bypassed
 			  injection_data		: in  std_logic_vector (WIDTH downto 0); -- Datalink from PE
 			  injection_enq		: in  std_logic;								  -- Buffer enqueue from PE
 			  injection_status	: out std_logic_vector (1 downto 0);	  -- Buffer status to PE
@@ -261,7 +262,7 @@ architecture rtl of BlazeRouter is
 				sw_eastOut	: out std_logic_vector (WIDTH downto 0);	
 				sw_southOut	: out std_logic_vector (WIDTH downto 0);
 				sw_westOut 	: out std_logic_vector (WIDTH downto 0);
-				sw_rnaCtrl  : out std_logic_vector (WIDTH downto 0);		-- Control packet to RNA
+				sw_rnaCtrl  : out std_logic_vector (WIDTH downto 0);		-- Control packet to RNA from PE
 				sw_ejct		: out std_logic_vector (WIDTH downto 0);		-- To PE
 				sw_dGNorthO : out std_logic;										-- Data good signal to neighbors
 				sw_dGEastO	: out std_logic;
@@ -577,6 +578,7 @@ begin
 										vcSwDGWest,
 										reset,				-- Switch reset for data good ***
 										iFifoaStat,			
+										-- Need signal here for 
 										
 										swRnaCtrlFlg,		-- control packet indicator flag
 										north_data_out,	-- Outgoing traffic ***
