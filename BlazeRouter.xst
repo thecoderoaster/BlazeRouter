@@ -1,5 +1,0 @@
-set -tmpdir "C:/Documents and Settings/asmdev/Desktop/blazerouter/BlazeRouter/xst/projnav.tmp"
-set -xsthdpdir "C:/Documents and Settings/asmdev/Desktop/blazerouter/BlazeRouter/xst"
-elaborate
--ifn BlazeRouter.prj
--ifmt mixed

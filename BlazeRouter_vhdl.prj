@@ -1,8 +1,0 @@
-vhdl work "C:\Documents and Settings\asmdev\Desktop\blazerouter\BlazeRouter\BlazePackage.vhd"
-vhdl work "C:\Documents and Settings\asmdev\Desktop\blazerouter\BlazeRouter\flow_control.vhd"
-vhdl work "C:\Documents and Settings\asmdev\Desktop\blazerouter\BlazeRouter\Buffer.vhd"
-vhdl work "C:\Documents and Settings\asmdev\Desktop\blazerouter\BlazeRouter\virtual_channel.vhd"
-vhdl work "C:\Documents and Settings\asmdev\Desktop\blazerouter\BlazeRouter\SwitchUnit.vhd"
-vhdl work "C:\Documents and Settings\asmdev\Desktop\blazerouter\BlazeRouter\flow_controller_unit.vhd"
-vhdl work "C:\Documents and Settings\asmdev\Desktop\blazerouter\BlazeRouter\Arbiter.vhd"
-vhdl work "C:\Documents and Settings\asmdev\Desktop\blazerouter\BlazeRouter\BlazeRouter.vhd"

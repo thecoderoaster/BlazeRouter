@@ -11,11 +11,22 @@ use ieee.std_logic_unsigned.all;
 
 package router_library is
 	--Universal constants Go Here (these are things that determine dimensions and can be changed on the fly)
-	constant WIDTH		: integer := 31;
-	constant SIZE		: integer := 10;
-	constant LUT_SIZE : integer := 7;			--Start with 8 bits (move up eventually) (KVH)
+	constant WIDTH			: integer := 61;
+	constant SIZE			: integer := 10;
+	constant LUT_SIZE 	: integer := 7;		--Start with 8 bits (move up eventually) (KVH)
 	
-	constant RSV_WIDTH: integer := 40; -- RSV Packets are 40 bits wide.
+	--Arbiter.vhd specific
+	constant CP_WIDTH		: integer := 62;		--Control Packet Width
+	constant	RSV_WIDTH 	: integer := 3;		--Reservation Table Width
+	constant SCH_WIDTH	: integer := 32;		--Scheduler Table Width
+	constant RTE_WIDTH	: integer := 3;		--Routing Table Width
+	constant ADR_WIDTH	: integer := 16;		--Address Look Up Table Width
+	constant PID_WIDTH	: integer := 8;		--Packet ID Width
+	constant GID_WIDTH	: integer := 8;		--Group ID Width
+	constant PATH_WIDTH	: integer := 3;		--Path Width
+	constant CON_WIDTH	: integer := 2;		--
+	constant TID_WIDTH	: integer := 32;		--Timing 
+	constant ADDR_WIDTH	: integer := 4;		--2^4 = (3 downto 0) possible entries (16)
 	
 	--Buffer Status Codes Go Here
 	constant FULL_FIFO				: std_logic_vector (1 downto 0) := "10";		-- CODE: 0x02 = FIFO full
@@ -39,5 +50,6 @@ package router_library is
 	type	t_ram8		is array (0 to LUT_SIZE) of std_logic_vector(7 downto 0);
 	type	t_ram16		is array (0 to LUT_SIZE) of std_logic_vector(15 downto 0);
 	type	t_ram32		is array (0 to LUT_SIZE) of std_logic_vector(31 downto 0);
+	type  t_ram40		is array (0 to LUT_SIZE) of std_logic_vector(RSV_WIDTH-1 downto 0);
 	
 end router_library;

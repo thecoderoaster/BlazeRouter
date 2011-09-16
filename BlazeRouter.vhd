@@ -24,6 +24,7 @@
 -- 					 Revision 0.01 - File Created
 --						 Revision 0.02 - Added additional modules (KVH)
 --						 Revision 0.03 - Revised entity and components (KM)
+--						 Revision 0.04 - Plugged Arbiter into BlazeRouter (KVH)
 -- Additional Comments: 
 --
 ----------------------------------------------------------------------------------
@@ -119,76 +120,65 @@ architecture rtl of BlazeRouter is
 	component Arbiter is
 		port (
 			--Internal
-			clk : in std_logic;
-			reset : in std_logic;
+				clk					: in std_logic;
+				reset					: in std_logic;
+				
+				--Virtual Channel Related
+				n_vc_deq 			: out  	std_logic;									-- Dequeue latch input (from RNA) (dmuxed)
+				n_vc_rnaSelI 		: out  	std_logic_vector (1 downto 0);		-- FIFO select for input (from RNA) 
+				n_vc_rnaSelO 		: out  	std_logic_vector (1 downto 0);		-- FIFO select for output (from RNA) 
+				n_vc_rnaSelS		: out		std_logic_vector (1 downto 0);		-- FIFO select for status (from RNA)
+				n_vc_strq 			: out  	std_logic;									-- Status request (from RNA) (dmuxed)
+				n_vc_status 		: in  	std_logic_vector (1 downto 0);		-- Latched status flags of pointed FIFO (muxed)
+				
+				e_vc_deq 			: out  	std_logic;									-- Dequeue latch input (from RNA) (dmuxed)
+				e_vc_rnaSelI 		: out  	std_logic_vector (1 downto 0);		-- FIFO select for input (from RNA) 
+				e_vc_rnaSelO 		: out  	std_logic_vector (1 downto 0);		-- FIFO select for output (from RNA) 
+				e_vc_rnaSelS		: out		std_logic_vector (1 downto 0);		-- FIFO select for status (from RNA)
+				e_vc_strq 			: out  	std_logic;									-- Status request (from RNA) (dmuxed)
+				e_vc_status 		: in  	std_logic_vector (1 downto 0);		-- Latched status flags of pointed FIFO (muxed)
+				
+				s_vc_deq 			: out  	std_logic;									-- Dequeue latch input (from RNA) (dmuxed)
+				s_vc_rnaSelI 		: out  	std_logic_vector (1 downto 0);		-- FIFO select for input (from RNA) 
+				s_vc_rnaSelO 		: out  	std_logic_vector (1 downto 0);		-- FIFO select for output (from RNA) 
+				s_vc_rnaSelS		: out		std_logic_vector (1 downto 0);		-- FIFO select for status (from RNA)
+				s_vc_strq 			: out  	std_logic;									-- Status request (from RNA) (dmuxed)
+				s_vc_status 		: in  	std_logic_vector (1 downto 0);		-- Latched status flags of pointed FIFO (muxed)
+				
+				w_vc_deq 			: out  	std_logic;									-- Dequeue latch input (from RNA) (dmuxed)
+				w_vc_rnaSelI 		: out  	std_logic_vector (1 downto 0);		-- FIFO select for input (from RNA) 
+				w_vc_rnaSelO 		: out  	std_logic_vector (1 downto 0);		-- FIFO select for output (from RNA) 
+				w_vc_rnaSelS		: out		std_logic_vector (1 downto 0);		-- FIFO select for status (from RNA)
+				w_vc_strq 			: out 	std_logic;									-- Status request (from RNA) (dmuxed)
+				w_vc_status 		: in  	std_logic_vector (1 downto 0);		-- Latched status flags of pointed FIFO (muxed)
 			
-			-- VC related
-			n_vc_fStatSel : out std_logic_vector (1 downto 0);
-			n_vc_enqSel : out std_logic_vector (1 downto 0);
-			n_vc_statSel : out std_logic_vector (1 downto 0);
-			n_vc_status : in std_logic_vector (1 downto 0);
-			n_vc_statStrbSel : out std_logic_vector (1 downto 0);
-			n_vc_statStrb : out std_logic;
-			n_vc_dataOutSel : out std_logic_vector (1 downto 0);
-			n_vc_deqSel : out std_logic_vector (1 downto 0);
-			n_vc_deq : out std_logic;
-
-			e_vc_fStatSel : out std_logic_vector (1 downto 0);
-			e_vc_enqSel : out std_logic_vector (1 downto 0);
-			e_vc_statSel : out std_logic_vector (1 downto 0);
-			e_vc_status : in std_logic_vector (1 downto 0);
-			e_vc_statStrbSel : out std_logic_vector (1 downto 0);
-			e_vc_statStrb : out std_logic;
-			e_vc_dataOutSel : out std_logic_vector (1 downto 0);
-			e_vc_deqSel : out std_logic_vector (1 downto 0);
-			e_vc_deq : out std_logic;
-
-			s_vc_fStatSel : out std_logic_vector (1 downto 0);
-			s_vc_enqSel : out std_logic_vector (1 downto 0);
-			s_vc_statSel : out std_logic_vector (1 downto 0);
-			s_vc_status : in std_logic_vector (1 downto 0);
-			s_vc_statStrbSel : out std_logic_vector (1 downto 0);
-			s_vc_statStrb : out std_logic;
-			s_vc_dataOutSel : out std_logic_vector (1 downto 0);
-			s_vc_deqSel : out std_logic_vector (1 downto 0);
-			s_vc_deq : out std_logic;
-
-			w_vc_fStatSel : out std_logic_vector (1 downto 0);
-			w_vc_enqSel : out std_logic_vector (1 downto 0);
-			w_vc_statSel : out std_logic_vector (1 downto 0);
-			w_vc_status : in std_logic_vector (1 downto 0);
-			w_vc_statStrbSel : out std_logic_vector (1 downto 0);
-			w_vc_statStrb : out std_logic;
-			w_vc_dataOutSel : out std_logic_vector (1 downto 0);
-			w_vc_deqSel : out std_logic_vector (1 downto 0);
-			w_vc_deq : out std_logic;
+				--FCU Related
+				n_CTRflg				: out std_logic;										-- Send a CTR to neighbor for packet
+				e_CTRflg				: out std_logic;													
+				s_CTRflg				: out std_logic;
+				w_CTRflg				: out std_logic;
 			
-			--FCU Related
-			n_CTRflg : out std_logic; -- Send a CTR to neighbor for packet
-			e_CTRflg : out std_logic;
-			s_CTRflg : out std_logic;
-			w_CTRflg : out std_logic;
-			n_CtrlFlg : in std_logic; --Receive a control packet flag from neighbor 
-			e_CtrlFlg : in std_logic; --(data good from neighbor via fcu)
-			s_CtrlFlg : in std_logic;
-			w_CtrlFlg : in std_logic;
-
-			--Scheduler Related (FCU)
-			n_rnaCtrl : in std_logic_vector(RSV_WIDTH-1 downto 0); -- Control Packet 
-			e_rnaCtrl : in std_logic_vector(RSV_WIDTH-1 downto 0);
-			s_rnaCtrl : in std_logic_vector(RSV_WIDTH-1 downto 0);
-			w_rnaCtrl : in std_logic_vector(RSV_WIDTH-1 downto 0);
+				n_CtrlFlg			: in std_logic;										--Receive a control packet flag from neighbor 
+				e_CtrlFlg			: in std_logic;										--(data good from neighbor via fcu)
+				s_CtrlFlg			: in std_logic;
+				w_CtrlFlg			: in std_logic;
 			
-			--Switch Related 
-			n_dSel : out std_logic_vector (2 downto 0); -- Select lines for data direction
-			e_dSel : out std_logic_vector (2 downto 0);
-			s_dSel : out std_logic_vector (2 downto 0);
-			w_dSel : out std_logic_vector (2 downto 0);
-			ejct_dSel : out std_logic_vector (2 downto 0);
-
-			rna_ctrlPkt : out std_logic_vector (RSV_WIDTH-1 downto 0); -- Control packet generator output
-			injt_ctrlPkt : in std_logic_vector (WIDTH downto 0)); -- Control packet from PE
-
+				--Scheduler Related
+				n_rnaCtrl			: in std_logic_vector(WIDTH downto 0);			-- Control Packet 
+				e_rnaCtrl			: in std_logic_vector(WIDTH downto 0);
+				s_rnaCtrl			: in std_logic_vector(WIDTH downto 0);
+				w_rnaCtrl			: in std_logic_vector(WIDTH downto 0);
+								
+				--Switch Related
+				sw_nSel				: out std_logic_vector(2 downto 0);
+				sw_eSel				: out std_logic_vector(2 downto 0);
+				sw_sSel				: out std_logic_vector(2 downto 0);
+				sw_wSel				: out std_logic_vector(2 downto 0);
+				sw_ejectSel			: out std_logic_vector(2 downto 0);										
+				--sw_rnaCtFl			: in std_logic;										-- Flag from Switch for injection packet
+				rna_ctrlPkt			: out std_logic_vector (WIDTH downto 0);		-- Control packet generator output				
+				injt_ctrlPkt		: in std_logic_vector (WIDTH downto 0)			-- coming from switch control packet from PE	
+				);
 		end component;
 
 	-- Flow control for network neighbors
@@ -319,10 +309,10 @@ architecture rtl of BlazeRouter is
 	signal rnaFcEastCtrFlg	: std_logic;
 	signal rnaFcSouthCtrFlg	: std_logic;
 	signal rnaFcWestCtrFlg	: std_logic;
-	signal fcRnaNorthCtPkt	: std_logic_vector (WIDTH to 0); -- Data from FC to RNA (control packets)
-	signal fcRnaEastCtPkt	: std_logic_vector (WIDTH to 0);
-	signal fcRnaSouthCtPkt	: std_logic_vector (WIDTH to 0);
-	signal fcRnaWestCtPkt	: std_logic_vector (WIDTH to 0);	
+	signal fcRnaNorthCtPkt	: std_logic_vector (WIDTH downto 0); -- Data from FC to RNA (control packets)
+	signal fcRnaEastCtPkt	: std_logic_vector (WIDTH downto 0);
+	signal fcRnaSouthCtPkt	: std_logic_vector (WIDTH downto 0);
+	signal fcRnaWestCtPkt	: std_logic_vector (WIDTH downto 0);	
 	signal fcRnaNorthCStrb	: std_logic;	-- Control strobe indicator from FC to RNA
 	signal fcRnaEastCStrb	: std_logic;
 	signal fcRnaSouthCStrb	: std_logic;
@@ -368,45 +358,34 @@ begin
 	ar: Arbiter port map (	clk,  -- *** -- Internal
 									reset, -- ***
 									
-									n_vc_fStatSel, -- not needed controled by I
+									
+									rnaVcNorthDq,					--KM: Please review
 									rnaVcNorthSelI,
-									n_vc_statSel, -- not needed  controlled by S
-									vcRnaNorthStat,
+									rnaVcNorthSelO,
 									rnaVcNorthSelS,
 									rnaVcNorthStrq,
-									rnaVcNorthSelO,
-									n_vc_deqSel, -- not needed controled by O
-									rnaVcNorthDq,
-
-									e_vc_fStatSel, -- not needed controled by I
+									vcRnaNorthStat,
+									
+									rnaVcEastDq,
 									rnaVcEastSelI,
-									e_vc_statSel, -- not needed  controlled by S
-									vcRnaEastStat,
+									rnaVcEastSelO,
 									rnaVcEastSelS,
 									rnaVcEastStrq,
-									rnaVcEastSelO,
-									e_vc_deqSel, -- not needed controled by O
-									rnaVcEastDq,
+									vcRnaEastStat,
 
-									s_vc_fStatSel, -- not needed controled by I
+									rnaVcSouthDq,
 									rnaVcSouthSelI,
-									s_vc_statSel, -- not needed  controlled by S
-									vcRnaSouthStat,
+									rnaVcSouthSelO,
 									rnaVcSouthSelS,
 									rnaVcSouthStrq,
-									rnaVcSouthSelO,
-									s_vc_deqSel, -- not needed controled by O
-									rnaVcSouthDq,
-
-									w_vc_fStatSel, -- not needed controled by I
+									vcRnaSouthStat,
+									
+									rnaVcWestDq,
 									rnaVcWestSelI,
-									w_vc_statSel, -- not needed  controlled by S
-									vcRnaWestStat,
+									rnaVcWestSelO,
 									rnaVcWestSelS,
 									rnaVcWestStrq,
-									rnaVcWestSelO,
-									w_vc_deqSel, -- not needed controled by O
-									rnaVcWestDq,
+									vcRnaWestStat,
 									
 									--FCU Related
 									rnaFcNorthCtrFlg, -- Send a CTR to neighbor for packet
