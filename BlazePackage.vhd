@@ -17,7 +17,7 @@ package router_library is
 	
 	--Arbiter.vhd specific
 	constant CP_WIDTH		: integer := 62;		--Control Packet Width
-	constant	RSV_WIDTH 	: integer := 3;		--Reservation Table Width
+	constant	RSV_WIDTH 	: integer := 6;		--Reservation Table Width
 	constant SCH_WIDTH	: integer := 32;		--Scheduler Table Width
 	constant RTE_WIDTH	: integer := 3;		--Routing Table Width
 	constant ADR_WIDTH	: integer := 16;		--Address Look Up Table Width

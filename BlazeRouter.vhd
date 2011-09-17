@@ -175,7 +175,7 @@ architecture rtl of BlazeRouter is
 				sw_sSel				: out std_logic_vector(2 downto 0);
 				sw_wSel				: out std_logic_vector(2 downto 0);
 				sw_ejectSel			: out std_logic_vector(2 downto 0);										
-				--sw_rnaCtFl			: in std_logic;										-- Flag from Switch for injection packet
+				sw_rnaCtFl			: in std_logic;										-- Flag from Switch for injection packet
 				rna_ctrlPkt			: out std_logic_vector (WIDTH downto 0);		-- Control packet generator output				
 				injt_ctrlPkt		: in std_logic_vector (WIDTH downto 0)			-- coming from switch control packet from PE	
 				);
@@ -408,7 +408,8 @@ begin
 									rnaSwEastSel,
 									rnaSwSouthSel,
 									rnaSwWestSel,
-									rnaSwEjectSel,
+									rnaSwEjectSel,	
+									swRnaCtrlFlg,
 									
 									rnaSwCtrlPktO, -- Control packet generator output
 									swRnaCtrlPktI); -- Control packet from PE

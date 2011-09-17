@@ -100,7 +100,7 @@ entity Arbiter is
 				sw_sSel				: out std_logic_vector(2 downto 0);
 				sw_wSel				: out std_logic_vector(2 downto 0);
 				sw_ejectSel			: out std_logic_vector(2 downto 0);										
-				--sw_rnaCtFl			: in std_logic;										-- Flag from Switch for injection packet
+				sw_rnaCtFl			: in std_logic;										-- Flag from Switch for injection packet
 				rna_ctrlPkt			: out std_logic_vector (WIDTH downto 0);		-- Control packet generator output				
 				injt_ctrlPkt		: in std_logic_vector (WIDTH downto 0)			-- coming from switch control packet from PE	
 				);						
@@ -219,7 +219,7 @@ architecture rtl of Arbiter is
 			sw_sSel				: out std_logic_vector(2 downto 0);
 			sw_wSel				: out std_logic_vector(2 downto 0);
 			sw_ejectSel			: out std_logic_vector(2 downto 0);
-			--sw_rnaCtFl			: in std_logic;
+			sw_rnaCtFl			: in std_logic;
 			rna_ctrlPkt			: out std_logic_vector(cp_size-1 downto 0);
 			injt_ctrlPkt		: in std_logic_vector (cp_size-1 downto 0)
 
@@ -272,7 +272,7 @@ begin
 					s_vc_deq, s_vc_rnaSelI, s_vc_rnaSelO, s_vc_rnaSelS, s_vc_strq, s_vc_status,
 					w_vc_deq, w_vc_rnaSelI, w_vc_rnaSelO, w_vc_rnaSelS, w_vc_strq, w_vc_status,
 					n_CTRFlg, n_CtrlFlg, n_rnaCtrl, e_CTRFlg, e_CtrlFlg, e_rnaCtrl, s_CTRFlg, s_CtrlFlg, s_rnaCtrl,
-					w_CTRFlg, w_CtrlFlg, w_rnaCtrl, sw_nSel, sw_eSel, sw_sSel, sw_wSel, sw_ejectSel, --sw_rnaCtFl, 
+					w_CTRFlg, w_CtrlFlg, w_rnaCtrl, sw_nSel, sw_eSel, sw_sSel, sw_wSel, sw_ejectSel, sw_rnaCtFl, 
 					rna_ctrlPkt, injt_ctrlPkt);
 	
 	
